@@ -1,0 +1,76 @@
+{
+ "provenance": {
+  "version": "1.0.0",
+  "git": "unversioned",
+  "python": "3.14.7",
+  "generated_at": "2026-09-02T23:43:58+00:00",
+  "finalitybench_version": "1.0.0",
+  "finalitybench_path": "/Users/Abhishek.Sharma/Downloads/papers/finalitybench",
+  "finalitybench_git": "adb0d19",
+  "experiment": "e4_repair"
+ },
+ "policies": [
+  "react",
+  "rule_based",
+  "optimistic"
+ ],
+ "n_episodes": 238,
+ "rows": [
+  {
+   "method": "minimal_sufficient",
+   "loss_recovered_share": 1.0,
+   "fully_fixed_rate": 1.0,
+   "dollars_recovered": 8248860.0,
+   "dollars_available": 8248860.0,
+   "n": 238
+  },
+  {
+   "method": "joint_shapley",
+   "loss_recovered_share": 1.0,
+   "fully_fixed_rate": 1.0,
+   "dollars_recovered": 8248860.0,
+   "dollars_available": 8248860.0,
+   "n": 238
+  },
+  {
+   "method": "fault_single",
+   "loss_recovered_share": 0.8241599445256678,
+   "fully_fixed_rate": 0.8109243697478992,
+   "dollars_recovered": 6798380.0,
+   "dollars_available": 8248860.0,
+   "n": 238
+  },
+  {
+   "method": "joint_greedy",
+   "loss_recovered_share": 0.8241599445256678,
+   "fully_fixed_rate": 0.8109243697478992,
+   "dollars_recovered": 6798380.0,
+   "dollars_available": 8248860.0,
+   "n": 238
+  },
+  {
+   "method": "first_divergence",
+   "loss_recovered_share": 0.12531671043028977,
+   "fully_fixed_rate": 0.06722689075630252,
+   "dollars_recovered": 1033720.0,
+   "dollars_available": 8248860.0,
+   "n": 238
+  },
+  {
+   "method": "last_action",
+   "loss_recovered_share": 0.0,
+   "fully_fixed_rate": 0.0,
+   "dollars_recovered": 0.0,
+   "dollars_available": 8248860.0,
+   "n": 238
+  },
+  {
+   "method": "agent_only",
+   "loss_recovered_share": 0.0,
+   "fully_fixed_rate": 0.0,
+   "dollars_recovered": 0.0,
+   "dollars_available": 8248860.0,
+   "n": 238
+  }
+ ]
+}

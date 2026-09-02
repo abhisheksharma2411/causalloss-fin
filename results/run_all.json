@@ -1,0 +1,20 @@
+{
+ "provenance": {
+  "version": "1.0.0",
+  "git": "unversioned",
+  "python": "3.14.7",
+  "generated_at": "2026-09-02T23:44:04+00:00",
+  "finalitybench_version": "1.0.0",
+  "finalitybench_path": "/Users/Abhishek.Sharma/Downloads/papers/finalitybench",
+  "finalitybench_git": "adb0d19",
+  "experiment": "run_all"
+ },
+ "timings_seconds": {
+  "e1_attribution": 22.1,
+  "e2_allocation": 22.18,
+  "e3_shapley": 12.37,
+  "e4_repair": 12.23,
+  "e5_landscape": 2.06,
+  "e6_cost": 3.81
+ }
+}

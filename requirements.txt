@@ -1,0 +1,5 @@
+# The causal layer uses only the standard library plus FinalityBench, which is
+# fetched by `make setup` and is itself dependency-free at its core. These are
+# for the test runner and the figures.
+pytest>=8.3,<10
+matplotlib>=3.9,<4

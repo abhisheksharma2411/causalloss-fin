@@ -1,0 +1,82 @@
+{
+ "provenance": {
+  "version": "1.0.0",
+  "git": "unversioned",
+  "python": "3.14.7",
+  "generated_at": "2026-09-02T23:43:34+00:00",
+  "finalitybench_version": "1.0.0",
+  "finalitybench_path": "/Users/Abhishek.Sharma/Downloads/papers/finalitybench",
+  "finalitybench_git": "adb0d19",
+  "experiment": "e2_allocation"
+ },
+ "policies": [
+  "react",
+  "rule_based",
+  "optimistic"
+ ],
+ "n_episodes": 545,
+ "strata": {
+  "agent": 180,
+  "conjunctive": 126,
+  "overdetermined": 70,
+  "single": 169
+ },
+ "rows": [
+  {
+   "method": "fault_single",
+   "mean_allocation_error": 0.0,
+   "misattribution_rate": 0.0,
+   "dollars_wrongly_charged_to_agent": 0,
+   "true_infrastructure_dollars": 11438340,
+   "share_of_infra_dollars_misfiled": 0.0
+  },
+  {
+   "method": "minimal_sufficient",
+   "mean_allocation_error": 0.0,
+   "misattribution_rate": 0.0,
+   "dollars_wrongly_charged_to_agent": 0,
+   "true_infrastructure_dollars": 11438340,
+   "share_of_infra_dollars_misfiled": 0.0
+  },
+  {
+   "method": "joint_greedy",
+   "mean_allocation_error": 0.0,
+   "misattribution_rate": 0.0,
+   "dollars_wrongly_charged_to_agent": 0,
+   "true_infrastructure_dollars": 11438340,
+   "share_of_infra_dollars_misfiled": 0.0
+  },
+  {
+   "method": "joint_shapley",
+   "mean_allocation_error": 0.0,
+   "misattribution_rate": 0.0,
+   "dollars_wrongly_charged_to_agent": 0,
+   "true_infrastructure_dollars": 11438340,
+   "share_of_infra_dollars_misfiled": 0.0
+  },
+  {
+   "method": "first_divergence",
+   "mean_allocation_error": 0.3302752293577982,
+   "misattribution_rate": 0.0,
+   "dollars_wrongly_charged_to_agent": 0,
+   "true_infrastructure_dollars": 11438340,
+   "share_of_infra_dollars_misfiled": 0.0
+  },
+  {
+   "method": "last_action",
+   "mean_allocation_error": 0.6697247706422018,
+   "misattribution_rate": 1.0,
+   "dollars_wrongly_charged_to_agent": 11438340,
+   "true_infrastructure_dollars": 11438340,
+   "share_of_infra_dollars_misfiled": 1.0
+  },
+  {
+   "method": "agent_only",
+   "mean_allocation_error": 0.6697247706422018,
+   "misattribution_rate": 1.0,
+   "dollars_wrongly_charged_to_agent": 11438340,
+   "true_infrastructure_dollars": 11438340,
+   "share_of_infra_dollars_misfiled": 1.0
+  }
+ ]
+}

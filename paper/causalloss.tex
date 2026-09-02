@@ -1,0 +1,664 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\input{numbers}
+
+\begin{document}
+
+\title{CausalLoss-Fin: Splitting the Bill Between a Financial\\Agent and the Infrastructure It Ran On}
+
+\author{\IEEEauthorblockN{Abhishek Sharma}
+\IEEEauthorblockA{Senior Member, IEEE\\
+\texttt{abhicse24@gmail.com} \quad ORCID: 0009-0007-1103-2103}}
+
+\maketitle
+
+\begin{abstract}
+When an agent handling a payment exception loses money, published counterfactual
+attribution will tell you which of its steps to blame. It will tell you that
+even when the answer is that a settlement message was dropped and the agent
+never had a chance. Methods in this line intervene on the agent's own
+steps---replace a step, re-run forward, measure the shift---and their causal
+models contain no variable for the environment, so every dollar they explain is
+charged to a decision. We take a benchmark whose fault process is explicit and
+replayable, decompose each episode's realised delivery schedule into named,
+individually repairable messages, and intervene on \emph{both} the agent's
+choices and the infrastructure's. A telescoping identity then splits any
+policy's loss exactly three ways---what the faults cost it, what a better policy
+would have saved, and what no unprivileged policy avoids---with Shapley values
+distributing the first term across individual messages. On \nPlanted{} episodes
+whose causes are planted rather than derived, across \nPolicies{} policies,
+agent-only intervention identifies the true cause in \agentOnlyInfra\%\ of
+infrastructure episodes, misfiles \agentOnlyMisattr\%\ of them, and charges
+\$\agentOnlyDollars{} of infrastructure-caused loss to the agent. Repairing what
+it names recovers \agentOnlyRepair\%\ of the available loss; repairing what a
+minimal sufficient set names recovers \minSuffRepair\%, at \minSuffReplays{}
+replays per episode against \agentOnlyReplays. Scoring messages one at a time is
+not merely imprecise: \nonAdditiveRate\%\ of episodes do not decompose
+additively, and on overdetermined ones every single-repair score is zero.
+Applied without planting, the split says something uncomfortable---for one
+policy the infrastructure's net contribution is \emph{negative}, because faults
+that hide information sometimes stop it from acting on it.
+\end{abstract}
+
+\begin{IEEEkeywords}
+causal attribution, counterfactual intervention, agent failure analysis,
+responsibility allocation, payment systems, Shapley value
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+An agent is asked to resolve a payment exception. It reads the processor, which
+says the capture is still pending, waits, reads again, sees nothing, and closes
+the case. The capture had in fact settled four minutes earlier; the message
+saying so was dropped in transit. The customer is charged and never receives
+the goods, and the loss is the order value plus a dispute fee.
+
+Now ask the question every incident review asks: whose fault was that?
+
+Recent work answers it by intervention. Causal Agent Replay~\cite{car} models a
+run as a structural causal model, applies a \emph{do} operation to a step,
+re-executes the trajectory forward under the same policy, and reports the shift
+in the outcome distribution. CausalFlow~\cite{causalflow} computes
+step-level causal responsibility scores and then synthesises minimal repairs.
+REFLECT~\cite{reflect} diagnoses candidate error steps, replays with
+diagnosis-specific patches, and uses the verified outcome flip as contrastive
+evidence. These are careful methods and a clear advance on judging traces with
+a language model, which is correlational and, on one published benchmark,
+around 14\% accurate at the step level~\cite{car}.
+
+They also share an assumption. Each intervenes on the agent's steps and on
+nothing else. In an environment where the infrastructure is itself a causal
+agent---messages delayed, duplicated, dropped, reordered---a causal model with
+no infrastructure variable cannot name an infrastructure cause. Asked to
+explain the episode above, the best it can do is nominate the step that acted
+on information the agent never received. That is not a defect of execution. It
+is a property of the model, and it is the kind of thing that is easy to miss
+until the environment is one where the answer is checkable.
+
+This paper makes it checkable. We build on FinalityBench~\cite{finalitybench},
+an executable benchmark in which four financial systems---payment processor,
+double-entry ledger, ERP, bank feed---are fed independently faulted delivery
+streams derived from a hidden canonical event log, and agents are graded on
+executed monetary effect. Its fault process is explicit, seeded and replayable,
+which is what makes the counterfactual "what if that message had arrived"
+executable rather than hypothetical.
+
+Our contributions:
+
+\begin{itemize}
+\item \textbf{Joint intervention.} We intervene on agent decisions and on
+individual infrastructure faults in the same causal model, on the same episode,
+with exact common random numbers (Section~\ref{sec:scm}).
+
+\item \textbf{An exact three-way split.} A telescoping identity decomposes any
+policy's loss into infrastructure, policy and irreducible shares with no
+residual term. It holds on \decompExact{} episodes checked
+(Section~\ref{sec:split}).
+
+\item \textbf{A decomposition of the fault process into repairable units},
+together with the finding that FinalityBench's fault families compose rather
+than superpose---so per-family attribution is unsound, and we say why
+(Section~\ref{sec:faults}).
+
+\item \textbf{Planted ground truth in four strata}, including the
+overdetermined case that single-effect scoring provably cannot handle, with
+verified harmless distractors so that naming a cause is not trivial
+(Section~\ref{sec:planted}).
+
+\item \textbf{A measurement of what agent-only attribution costs} when the
+environment is at fault, in identification accuracy, in allocation error, in
+dollars, and in loss that repairing the named cause fails to recover
+(Section~\ref{sec:results}).
+\end{itemize}
+
+As in the benchmark this builds on, no language model was evaluated: no model
+endpoint was available. The policies whose failures we attribute are
+deterministic procedures, which sharpens the causal analysis---interventions are
+exact rather than sampled---and narrows what the results say about agents that
+reason. Section~\ref{sec:limits} is explicit about the difference.
+
+\section{Related work}
+
+\textbf{Counterfactual attribution for agent failures.} CAR~\cite{car} is the
+closest work and the one we compare against. It executes same-policy
+interventions rather than substituting an oracle or asking a model to judge
+text, reports distributional outcomes with confidence intervals, and includes
+Shapley credit-splitting and ground-truth validation. CausalFlow~\cite{causalflow}
+adds counterfactual repair, generating minimally edited traces that flip the
+outcome. REFLECT~\cite{reflect} targets silent failures, where the agent
+completes the task and the result is wrong with no error signal. All three
+intervene on agent steps. None models environment faults, and we verified this
+against each paper rather than inferring it from a summary.
+
+Our disagreement with this line is narrow and, we think, friendly. The
+machinery is right. The variable set is incomplete for environments where
+infrastructure causes loss, and Section~\ref{sec:results} quantifies what that
+incompleteness costs.
+
+\textbf{Actual causation.} The question of which of several events counts as
+the cause of an outcome is the subject of the structural-model account of
+actual causality~\cite{halpern2016}, in which a cause is a but-for cause
+relative to a contingency, and of the associated notion of degree of
+responsibility~\cite{chockler2004}. Overdetermination---two events, either
+sufficient alone, so neither is necessary---is the standard hard case, and it is
+the one our third stratum is built from. We take the practical rather than the
+philosophical route: a minimal sufficient set is the smallest set of messages
+whose joint repair removes the loss.
+
+\textbf{Shapley allocation.} Distributing a total among contributors so that
+the parts sum to the whole is the Shapley value~\cite{shapley1953}. It has been
+carried into root-cause analysis, though not without warnings: Kelen et
+al.~\cite{shapleyrca} show that the \emph{asymmetric} variant, which relaxes the
+symmetry axiom to encode a causal ordering, produces counter-intuitive
+attributions outside a restricted model class. We use the standard symmetric
+value, and for one specific job: dividing the infrastructure share across
+individual messages in a way that survives interaction. The share itself is not estimated by Shapley---it comes from the
+exact identity---so the efficiency axiom is a check on the implementation
+rather than a modelling assumption.
+
+\textbf{The environment.} FinalityBench~\cite{finalitybench} supplies the
+setting: a hidden canonical event log, four projections fed by separately
+faulted delivery streams, an effect-level monetary oracle, and paired
+counterfactual tasks. We consume its released artifact rather than
+reimplementing it, and every result here records which revision it ran against.
+
+\section{The setting}
+
+A FinalityBench episode is one order. A capture is submitted, and its terminal
+outcome---settled or failed---becomes a fact at some later instant that no tool
+can reveal early. Four systems learn about events through delivery streams that
+a seeded fault engine perturbs in six ways: delay, duplication, loss,
+reordering, half-committed ledger postings, and stale reads. An agent has
+eleven tools, five of them irreversible, and a ship-by deadline. Grading is on
+the merchant's terminal economic position, reported as the shortfall against a
+privileged reference that is told when the capture resolves.
+
+The property we need is that an episode is a pure function of the case, the
+seed, the policy and the delivery schedule. Replay with one message restored is
+therefore exact: two worlds that differ in one repaired delivery differ in
+nothing else, and no averaging over noise is required to see the effect.
+
+\section{Fault instances}
+\label{sec:faults}
+
+Attribution needs a cause one can point at. "Delay was enabled" is a knob;
+"the settlement message to the processor never arrived" is a cause. We
+decompose a realised schedule into named instances by diffing it against the
+fault-free schedule for the same case and seed: every way the two differ is an
+instance, and repairing all of them returns the fault-free world exactly. There
+are \meanInstances{} instances per episode on average and at most
+\maxInstances. An archetype's defining fault---the settlement the processor
+never hears about---appears as an instance too, flagged as structural, so it can
+be intervened on rather than being baked into the background.
+
+A first version decomposed per family instead, building each single-family
+schedule and diffing that against the baseline. It failed to reproduce the
+realised schedule on 149 of 240 episodes, and the reason is a property of the
+environment rather than a coding slip. FinalityBench draws its fault families
+independently but they do not \emph{act} independently: duplicate copies are
+placed relative to a delivery's already-delayed arrival, a half-commit
+propagates to copies that exist only because duplication fired, and whether a
+reorder swap is eligible at all depends on times that delay has already moved.
+Families that compose cannot be attributed by superposition. The family label
+therefore annotates an instance rather than defining it, and the label is
+assigned by a but-for test taken in context---remove that family from the full
+profile and ask whether this delivery still arrives when it did. Asked the
+naive way, in isolation, reordering appears never to fire at all; asked in
+context it accounts for a fifth of the moved deliveries, because the swaps it
+makes only become possible once delay has bunched arrivals together.
+
+\section{The causal model}
+\label{sec:scm}
+
+\subsection{Variables and structural equations}
+
+An episode is generated by the following model. The exogenous variables are the
+case $C$ (order value, when the capture resolves, whether it settles, whether a
+retry would work) and the fault realisation $F = \{f_1,\dots,f_m\}$, the set of
+individual message-level instances of Section~\ref{sec:faults}. The endogenous
+variables are the delivery schedule, each system's view at each instant, the
+agent's actions, the executed effects, and the loss:
+
+\begin{align}
+S      &= \textsc{schedule}(C, F) \\
+V_t^{(j)} &= \textsc{fold}_j\bigl(\{d \in S : \textsc{arr}(d) \le t - \lambda_j\}\bigr) \\
+A_k    &= \pi\bigl(H_{k-1}\bigr), \qquad H_k = H_{k-1} \cup \{(A_k, O_k)\} \\
+E      &= \textsc{effects}(A_1,\dots,A_n) \\
+L      &= R - \textsc{position}(C, E)
+\end{align}
+
+with $j$ ranging over the four systems, $\lambda_j$ that system's read lag, $\pi$
+the policy, $H_k$ the history it has seen, and $R$ the reference position, held
+fixed across every counterfactual so that a repaired message moves the policy's
+position and nothing else.
+
+Two things follow from the shape of these equations. First, $F$ enters only
+through $S$ and thus only through the views $V^{(j)}$: in this environment the
+infrastructure can harm an agent only by corrupting what it is able to see,
+never by moving money directly. Second, every equation is deterministic, so
+$do(f_i := \bot)$ and $do(A_k := a')$ are exact operations rather than
+distributions to be sampled.
+
+\subsection{Interventions}
+
+Two interventions are available.
+
+\emph{Repairing a message.} Rebuild the delivery schedule without one instance
+and re-run the same policy on the same case. Because the schedule is an input
+rather than a random draw, nothing else changes.
+
+\emph{Substituting a decision.} Force a chosen action at step $k$ and let the
+policy continue from there, seeing the consequences. We report the effect of a
+step as the loss avoided by its best alternative---a regret---rather than as a
+distribution shift, because the policies here are deterministic and resampling
+under the same policy, the usual move, changes nothing at all.
+
+\subsection{An exact three-way split}
+\label{sec:split}
+
+Write $w$ for the factual world, $w_0$ for the same case with every message
+repaired, $\pi$ for the policy under study, and $\pi^{*}$ for the best policy
+that uses no privileged information. Then
+
+\begin{equation}
+\begin{split}
+L(\pi, w) = \underbrace{L(\pi,w) - L(\pi,w_0)}_{\text{infrastructure}}
+          &+ \underbrace{L(\pi,w_0) - L(\pi^{*},w_0)}_{\text{policy}}\\
+          &+ \underbrace{L(\pi^{*},w_0)}_{\text{irreducible}}
+\end{split}
+\end{equation}
+
+The terms telescope, so the split is exact and there is no residual in which a
+modelling error could hide. This matters more than it might appear: a residual
+term is precisely where unattributed loss would accumulate, and unattributed
+loss in an agent-analysis tool gets read as the agent's fault. The identity
+holds on \decompExact{} episodes checked, and the test suite asserts it rather
+than assuming it.
+
+Shapley values then distribute the infrastructure share across individual
+messages, with coalition value $v(S) = L(\pi, w_0) - L(\pi, S)$. Exact below
+thirteen instances, permutation-sampled above; the sampled estimate sits within
+\shapleyError\%\ of the exact one in $L_1$.
+
+\section{Attribution methods}
+\label{sec:methods}
+
+Seven methods, sharing an interface: given an episode they return a ranked list
+of candidate causes with scores in cents, and a verdict on which side is
+responsible. Two are heuristics, one is the published shape we compare against,
+and four use fault interventions.
+
+\textbf{Last action.} Blame the final irreversible step. It is the reflex an
+incident review starts from, and it is included because the observation that
+motivates intervention-based attribution in the first place is that the step
+which executes a harmful action is rarely the step that decided on
+it~\cite{car}.
+
+\textbf{First divergence.} Blame the earliest message that arrived late or not
+at all. A plausible operations reflex---find the first thing that looks wrong
+and call it the cause---which ignores entirely whether that message mattered.
+
+\textbf{Agent-only intervention.} Substitute each of the agent's steps in turn,
+run forward under the same policy, and rank the steps by loss avoided. This is
+the shape of CAR~\cite{car}, CausalFlow~\cite{causalflow} and
+REFLECT~\cite{reflect} reduced to its essentials and transplanted into this
+environment: the interventions are exact rather than sampled because the policy
+is deterministic, which if anything makes it stronger than its published
+counterparts. Its causal model contains no infrastructure variable, so all of
+its causes are agent steps and its infrastructure share is identically zero.
+
+\textbf{Single-fault repair.} Repair each message on its own, rank by loss
+avoided. The natural first thing to try once fault interventions are available,
+and exactly right whenever the loss decomposes additively.
+
+\textbf{Minimal sufficient set.} Search for the smallest set of messages whose
+\emph{joint} repair removes the loss, smallest first. This is a but-for cause
+taken as a set rather than a singleton, in the spirit of the structural-model
+account of actual causation~\cite{halpern2016}: no member need be a cause on
+its own, and together they are. It is the only method here that is both exact
+on every stratum and cheap.
+
+\textbf{Joint greedy.} Rank agent steps and messages together by their
+individual effects. Included to show that combining the two sides naively is
+not enough: its shares do not sum to the loss, because a step regret and a
+message repair are not measured on the same scale.
+
+\textbf{Joint Shapley.} Take the agent and infrastructure shares from the exact
+identity of Section~\ref{sec:split}, then distribute the infrastructure share
+across individual messages by Shapley value, and rank within whichever side the
+identity says is responsible. Ranking the two sides against each other by raw
+score does not work---Shapley values sum to the infrastructure share while step
+regrets do not live on that scale, so a single step scored at the whole loss
+outranks two messages that split it---and an earlier version of this method lost
+every overdetermined episode for exactly that reason.
+
+\section{Planted causes}
+\label{sec:planted}
+
+Validating a method against causes the method itself derived proves nothing. We
+build episodes the other way round: start from a case the policy solves
+cleanly, inject a known set of faults, and check that the loss appears. The
+injected set is then the cause by definition.
+
+Four strata, each testing something different. \textbf{Single}
+(\nSingle{} episodes): one fault causes the loss. \textbf{Conjunctive}
+(\nConjunctive): two faults, neither harmful alone, harmful together---each is
+necessary given the other, so repairing either fixes the episode.
+\textbf{Overdetermined} (\nOverdetermined): two faults, \emph{either} sufficient
+on its own, so repairing one changes nothing and every one-at-a-time score is
+zero. \textbf{Agent} (\nAgentStratum): no faults bite, and the policy loses
+money anyway.
+
+Every episode also carries distractor faults, verified harmless \emph{in the
+presence of} the causal set rather than merely harmless alone. Without them the
+task is trivial: an earlier version planted only the causal faults, and a
+heuristic that named the earliest message in the schedule scored 100\%, because
+there was nothing else to name.
+
+\section{Results}
+\label{sec:results}
+
+\begin{table*}[t]
+\centering
+\caption{Identifying the planted cause. Verdict is the share of episodes on
+which the method assigns responsibility to the correct side.}
+\label{tab:accuracy}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\input{tables/accuracy}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{../figures/fig1_accuracy.pdf}
+\caption{Top-1 identification by stratum. Agent-only intervention is correct
+exactly when the agent is the cause.}
+\label{fig:accuracy}
+\end{figure}
+
+\subsection{Naming the cause}
+
+Table~\ref{tab:accuracy} and Figure~\ref{fig:accuracy} give identification
+accuracy. Agent-only intervention identifies the true cause on
+\agentOnlyInfra\%\ of infrastructure episodes and 100\% of agent episodes; its
+overall verdict accuracy, \agentOnlyVerdict\%, is the base rate of episodes in
+which the agent happens to be at fault. It is not that the method performs
+poorly. It answers a different question correctly.
+
+Single-fault repair is exact on the single and conjunctive strata and scores
+\faultSingleOverdet\%\ on the overdetermined one, which is the arithmetic: when
+either message alone is enough, repairing one changes nothing and every
+candidate scores zero. Minimal sufficient sets and joint Shapley are exact on
+all four.
+
+\subsection{Splitting the bill}
+
+\begin{table}[t]
+\centering
+\caption{Allocation between agent and infrastructure. Dollars charged to the
+agent are infrastructure-caused loss filed against a decision.}
+\label{tab:allocation}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\input{tables/allocation}
+\end{table}
+
+Table~\ref{tab:allocation} compares each method's split against the planted
+truth. Agent-only intervention misfiles \agentOnlyMisattr\%\ of infrastructure
+episodes and charges \$\agentOnlyDollars{} of infrastructure-caused loss to the
+agent.
+
+The methods that intervene on faults all reach zero allocation error, and this
+deserves a caveat rather than a victory lap. Once a method can intervene on the
+fault process at all, the agent/infrastructure split follows from the identity
+in Section~\ref{sec:split} and is exact by construction. The hard part is
+\emph{which} message, not \emph{which side}. Table~\ref{tab:allocation} shows
+what having the variable at all is worth; Table~\ref{tab:accuracy} shows what
+distinguishes the methods that have it.
+
+\subsection{Acting on the attribution}
+
+\begin{table*}[t]
+\centering
+\caption{Repairing what each method named, and what it cost to compute.}
+\label{tab:repair}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\input{tables/repair}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{../figures/fig2_repair_cost.pdf}
+\caption{Left: loss removed by repairing the named cause. Right: the same
+against replay cost. Minimal sufficient sets sit at the top-left corner.}
+\label{fig:repair}
+\end{figure}
+
+An attribution is worth something if repairing what it names removes the loss.
+Of \$\dollarsAvailable{} of infrastructure-caused loss, repairing what
+agent-only intervention names recovers \agentOnlyRepair\%---it names agent
+steps, and an agent step is not a thing an operator can repair. Single-fault
+repair recovers \faultSingleRepair\%. Minimal sufficient sets recover
+\minSuffRepair\%.
+
+Cost separates the two methods that are exact. Minimal sufficient sets need
+\minSuffReplays{} replays per episode; joint Shapley needs \shapleyReplays.
+Shapley buys the full allocation across messages, which a minimal set does not
+provide; when the question is only "what do we fix", the cheap method is also
+the right one.
+
+\subsection{How often interactions matter}
+
+Across \nonAdditiveRate\%\ of episodes with infrastructure loss, repairing each
+message on its own does not account for the whole infrastructure share---the
+mean gap is \$\interactionGap. On \overdetRate\%\ every single-repair score is
+zero while the total is not. Interaction is not a corner case here; it is a
+quarter of the episodes.
+
+\subsection{One episode, end to end}
+
+A concrete case makes the difference legible. Take a \texttt{lost\_settlement}
+task worth \$24.99 run under the ReAct loop. The capture settles, the
+settlement message to the processor is dropped, and seven fault instances are
+present in all. The policy polls the processor, never sees a settlement,
+escalates, and the merchant ends \$28.00 behind the reference.
+
+The three-way split assigns the whole \$28.00 to infrastructure: in a repaired
+world this policy solves the task exactly, so its policy and irreducible shares
+are zero. Shapley then divides that \$28.00 between two messages at \$14.00
+each---the dropped settlement to the processor, and a reordering at the bank
+feed---and gives zero to the other five. Neither of the two is sufficient alone:
+with either one repaired the policy recovers, which is why they split the
+credit evenly rather than one taking all of it.
+
+Agent-only intervention, run on the same episode, reports that the agent should
+have shipped at step~0 and assigns \$28.00 to that decision. The recommendation
+is not wrong as advice---shipping would indeed have been better---but as an
+explanation it inverts the case. At step~0 the agent had no evidence that the
+money had arrived, and the reason it had none is the first of the two messages
+Shapley named.
+
+\subsection{Where the money actually goes}
+
+\begin{table}[t]
+\centering
+\caption{The split applied to the whole corpus, without planting.}
+\label{tab:landscape}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\input{tables/landscape}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{../figures/fig3_landscape.pdf}
+\caption{The same decomposition for four policies over the whole corpus.}
+\label{fig:landscape}
+\end{figure}
+
+Applied without planting (Table~\ref{tab:landscape},
+Figure~\ref{fig:landscape}), the split says different things about different
+policies. For the rule-based procedure, \ruleInfra\%\ of its loss is the
+environment's doing. For the ReAct loop, \reactInfra\%\ is infrastructure and
+\reactPolicy\%\ is its own. For the finality-gated runtime the infrastructure
+and policy shares are both zero and \gateIrreducible\%\ of its
+\$\gateMeanLoss{} mean loss is irreducible---it loses only what no unprivileged
+policy can avoid, which the benchmark's own results reach by a different route.
+
+The interesting row is the optimistic policy, which ships as soon as the ledger
+shows any activity. Its infrastructure share is \optInfra\%---\emph{negative}.
+Faults help it, on net. A policy that acts on the first sign of payment is
+occasionally saved by a message going missing, because the message it did not
+receive is the one it would have acted on. We would not have predicted the sign
+and do not present it as a general result; it is a reminder that "the
+infrastructure was at fault" is a claim with a direction, and that a method
+which can only add blame to the agent cannot represent it at all.
+
+\subsection{Which situations are the environment's fault}
+
+\begin{table}[t]
+\centering
+\caption{Where responsibility sits, by archetype, pooled over the three
+non-gated policies. Shares are of that archetype's total excess loss.}
+\label{tab:archetype}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\input{tables/archetype}
+\end{table}
+
+Table~\ref{tab:archetype} breaks the same decomposition down by situation, and
+it lines up with what the benchmark says about itself from the other direction.
+Infrastructure dominates on the archetypes built around a message going missing,
+arriving stale, or posting twice---these are situations in which a competent
+policy is defeated by its inputs. The irreducible share concentrates on the
+cases whose outcome lands after the ship-by deadline, where repaired plumbing
+would not help because the fact itself has not happened yet. The practical
+reading is that these two groups call for different remedies: the first is
+fixed by making delivery reliable or by reading an authoritative channel, and
+the second is not fixable by any amount of engineering on the observation path.
+
+\section{Discussion}
+
+\textbf{The variable set is the design decision.} Nothing about CAR-style
+intervention is wrong. Given a variable, it estimates that variable's effect
+carefully. The result here is about what happens when a variable is missing:
+the loss does not go unexplained, it gets attributed to whatever variables
+remain. In an agent-analysis tool those are all agent steps, so the tool is
+biased toward blaming the agent by construction, not by error.
+
+\textbf{Exactness beats estimation where it is available.} The three-way split
+needs no confidence interval because it telescopes. The Shapley step needs one
+only above thirteen messages, and even then the sampled estimate is within
+\shapleyError\%. Deterministic replay is what buys this, and it is available in
+any environment whose fault process is seeded and reproducible.
+
+\textbf{What determinism buys and what it costs.} Every intervention here is
+a single replay with a known answer, not a Monte Carlo estimate over a
+stochastic policy. That is why the split needs no confidence interval and why
+overdetermination can be detected exactly rather than inferred from overlapping
+error bars. The price is that our agent-step intervention substitutes an action
+rather than resampling one, and those coincide only when the policy is
+deterministic. For a stochastic agent the two come apart, and the published
+methods we compare against are built for that case; how the comparison moves
+there is an open question we cannot settle from inside this environment.
+
+\textbf{Cheap methods can be exact.} The best accuracy-per-replay in
+Table~\ref{tab:repair} belongs to minimal sufficient sets, at
+\minSuffReplays{} replays. The expensive method is worth its cost only when the
+full per-message allocation is the deliverable.
+
+\section{Limitations}
+\label{sec:limits}
+
+\textbf{No language model was evaluated.} The policies are deterministic
+procedures. This is a real gain for the causal analysis---an intervention is
+exact, and there is no sampling noise to average away---and a real loss for
+external validity. Whether these conclusions hold when the agent is
+stochastic, and whether a resampling intervention behaves like our substitution
+intervention, is untested here. The environment's model adapter is written and
+tested against recorded transcripts but has never called a model.
+
+\textbf{One environment.} Everything is measured inside FinalityBench. Its
+faults are delivery-level, so infrastructure harms an agent exclusively by
+corrupting what it can see; an environment where infrastructure moves money
+directly would need a wider variable set than ours.
+
+\textbf{Overdetermination is rare in nature.} It is \overdetRate\%\ of episodes
+with infrastructure loss, and the stratum has \nOverdetermined{} episodes pooled
+across \nPolicies{} policies. The conclusion that single-effect scoring fails
+there is arithmetic rather than statistical, but the rate at which it costs
+anything in practice is estimated from a small sample.
+
+\textbf{Agent-step alternatives are a fixed menu.} Seven dispositions an
+operator would recognise, not the whole action space. A better alternative
+outside the menu would raise the measured effect of a step, which would make
+agent-only attribution look better, not worse.
+
+\textbf{The reference policy defines the irreducible share.} We use the
+benchmark's strongest implementable policy. A stronger one would move loss from
+the irreducible column into the policy column for everyone.
+
+\section{Conclusion}
+
+Given an environment whose fault process can be replayed, the question "was
+this the agent's fault or the system's?" has an exact answer, and it is cheap to
+compute. The obstacle is not statistical. It is that a causal model containing
+only agent steps has to answer "the agent" every time, and will do so
+confidently: on our planted episodes such a method misfiles every
+infrastructure failure and charges \$\agentOnlyDollars{} to decisions, and
+repairing what it names recovers none of it.
+
+\section*{Artifact availability}
+
+Code, the planted-episode generator and every result file are at
+\url{https://github.com/abhisheksharma2411/causalloss-fin}, archived at
+\textsc{doi} \texttt{ZENODO\_DOI\_PLACEHOLDER}. It consumes the released
+FinalityBench artifact~\cite{finalitybench} rather than reimplementing it, and
+each result file records the revision it ran against. \texttt{make reproduce}
+runs the suite end to end from a clean tree.
+
+\begin{thebibliography}{99}
+
+\bibitem{car}
+J.~Shah, ``Causal Agent Replay: Counterfactual attribution for LLM-agent
+failures,'' arXiv:2606.08275, Jun. 2026.
+
+\bibitem{causalflow}
+A.~Bonagiri, D.~Borkar, G.~J.~Anderias, S.~Rafatirad, and H.~Homayoun,
+``CausalFlow: Causal attribution and counterfactual repair for LLM agent
+failures,'' arXiv:2605.25338, May 2026.
+
+\bibitem{reflect}
+X.~Lin, Y.~Wang, T.~S.~T.~Kwok, D.~Guo, S.~A.~Nale, C.~Fleming, and G.~Cheng,
+``REFLECT: Intervention-supported error attribution for silent failures in LLM
+agent traces,'' arXiv:2606.09071, Jun. 2026.
+
+\bibitem{finalitybench}
+A.~Sharma, ``FinalityBench: An effect-level benchmark for agent decisions under
+delayed and conflicting financial finality,'' software artifact and manuscript,
+2026. \url{https://github.com/abhisheksharma2411/finalitybench}
+
+\bibitem{halpern2016}
+J.~Y.~Halpern, \emph{Actual Causality}. Cambridge, MA: MIT Press, 2016.
+
+\bibitem{chockler2004}
+H.~Chockler and J.~Y.~Halpern, ``Responsibility and blame: A structural-model
+approach,'' \emph{Journal of Artificial Intelligence Research}, vol.~22,
+pp.~93--115, 2004.
+
+\bibitem{shapley1953}
+L.~S.~Shapley, ``A value for $n$-person games,'' in \emph{Contributions to the
+Theory of Games II}, H.~W.~Kuhn and A.~W.~Tucker, Eds. Princeton University
+Press, 1953, pp.~307--317.
+
+\bibitem{shapleyrca}
+D.~M.~Kelen, M.~Petreczky, P.~Kersch, and A.~A.~Bencz\'ur, ``Theoretical
+evaluation of asymmetric Shapley values for root-cause analysis,''
+arXiv:2310.09961, Oct. 2023.
+
+\end{thebibliography}
+
+\end{document}

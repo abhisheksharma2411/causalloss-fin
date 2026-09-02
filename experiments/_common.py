@@ -1,0 +1,66 @@
+"""Shared plumbing for the experiment scripts."""
+
+from __future__ import annotations
+
+import json
+import platform
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+RESULTS = ROOT / "results"
+RESULTS.mkdir(exist_ok=True)
+
+
+def git_revision() -> str:
+    try:
+        out = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"],
+                             capture_output=True, text=True, timeout=5)
+        return out.stdout.strip() or "unversioned"
+    except Exception:
+        return "unversioned"
+
+
+def provenance(**extra: Any) -> dict[str, Any]:
+    from causalloss import __version__, p1_provenance
+
+    return {"version": __version__, "git": git_revision(),
+            "python": platform.python_version(),
+            "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            **p1_provenance(), **extra}
+
+
+def save(name: str, payload: dict[str, Any]) -> Path:
+    path = RESULTS / f"{name}.json"
+    path.write_text(json.dumps(payload, indent=1))
+    print(f"  wrote {path.relative_to(ROOT)}")
+    return path
+
+
+def load(name: str) -> dict[str, Any]:
+    return json.loads((RESULTS / f"{name}.json").read_text())
+
+
+def banner(title: str) -> None:
+    print(f"\n=== {title} ===")
+
+
+#: The policies attribution is run over. ReAct is the default subject: it is
+#: competent enough that its losses are interesting and simple enough that its
+#: traces are short.
+POLICY_NAMES = ("react", "rule_based", "optimistic", "transactional")
+
+
+def policy_factory(name: str):
+    from finalitybench import policies as P
+
+    return {
+        "react": P.ReActPolicy, "rule_based": P.RuleBasedPolicy,
+        "optimistic": P.OptimisticPolicy, "transactional": P.TransactionalRuntimePolicy,
+        "eager": P.EagerPolicy, "majority": P.MajorityVotePolicy,
+    }[name]

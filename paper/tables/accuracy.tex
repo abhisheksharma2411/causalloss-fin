@@ -1,0 +1,15 @@
+\begin{tabular}{lrrrrr}
+\toprule
+& \multicolumn{4}{c}{top-1 identification (\%)} & \\
+\cmidrule(lr){2-5}
+method & single & conjunctive & overdet. & agent & verdict (\%) \\
+\midrule
+last action & 0 & 0 & 0 & 100 & 33.0 \\
+first divergence & 7 & 13 & 53 & 0 & 67.0 \\
+agent-only intervention & 0 & 0 & 0 & 100 & 33.0 \\
+single-fault repair & 100 & 100 & 0 & 100 & 100.0 \\
+\bfseries joint, greedy & 100 & 100 & 0 & 100 & 100.0 \\
+\bfseries minimal sufficient set & 100 & 100 & 100 & 100 & 100.0 \\
+\bfseries joint Shapley & 100 & 100 & 100 & 100 & 100.0 \\
+\bottomrule
+\end{tabular}

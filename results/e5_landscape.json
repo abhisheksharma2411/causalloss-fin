@@ -1,0 +1,436 @@
+{
+ "provenance": {
+  "version": "1.0.0",
+  "git": "unversioned",
+  "python": "3.14.7",
+  "generated_at": "2026-09-02T23:44:01+00:00",
+  "finalitybench_version": "1.0.0",
+  "finalitybench_path": "/Users/Abhishek.Sharma/Downloads/papers/finalitybench",
+  "finalitybench_git": "adb0d19",
+  "experiment": "e5_landscape"
+ },
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "policies": [
+  "optimistic",
+  "rule_based",
+  "react",
+  "transactional"
+ ],
+ "decomposition_exact": "3852/3852",
+ "rows": [
+  {
+   "policy": "optimistic",
+   "n_episodes": 963,
+   "mean_loss": 16659.68535825545,
+   "infrastructure": -1096515,
+   "policy_gap": 14118672,
+   "irreducible": 3021120,
+   "total": 16043277,
+   "infrastructure_share": -0.06834732081232531,
+   "policy_share": 0.880036665825816,
+   "irreducible_share": 0.1883106549865093
+  },
+  {
+   "policy": "rule_based",
+   "n_episodes": 963,
+   "mean_loss": 21362.82450674974,
+   "infrastructure": 15444460,
+   "policy_gap": 2106820,
+   "irreducible": 3021120,
+   "total": 20572400,
+   "infrastructure_share": 0.7507369096459334,
+   "policy_share": 0.1024100250821489,
+   "irreducible_share": 0.14685306527191772
+  },
+  {
+   "policy": "react",
+   "n_episodes": 963,
+   "mean_loss": 13415.015576323987,
+   "infrastructure": 7665900,
+   "policy_gap": 2231640,
+   "irreducible": 3021120,
+   "total": 12918660,
+   "infrastructure_share": 0.5933974576310546,
+   "policy_share": 0.1727454705054549,
+   "irreducible_share": 0.23385707186349047
+  },
+  {
+   "policy": "transactional",
+   "n_episodes": 963,
+   "mean_loss": 3137.196261682243,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 3021120,
+   "total": 3021120,
+   "infrastructure_share": 0.0,
+   "policy_share": 0.0,
+   "irreducible_share": 1.0
+  }
+ ],
+ "by_archetype": [
+  {
+   "policy": "optimistic",
+   "archetype": "duplicate_settlement",
+   "n": 114,
+   "infrastructure": 385540,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 385540,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "optimistic",
+   "archetype": "late_chargeback",
+   "n": 39,
+   "infrastructure": -215700,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": -215700,
+   "infrastructure_share": -215700.0
+  },
+  {
+   "policy": "optimistic",
+   "archetype": "lost_settlement",
+   "n": 135,
+   "infrastructure": 380180,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 380180,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "optimistic",
+   "archetype": "partial_ledger",
+   "n": 96,
+   "infrastructure": 993920,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 993920,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "optimistic",
+   "archetype": "pending_fail",
+   "n": 135,
+   "infrastructure": -1660168,
+   "policy_gap": 8247921,
+   "irreducible": 215520,
+   "total": 6803273,
+   "infrastructure_share": -0.24402489801599905
+  },
+  {
+   "policy": "optimistic",
+   "archetype": "pending_fail_hard",
+   "n": 78,
+   "infrastructure": -2411489,
+   "policy_gap": 4983657,
+   "irreducible": 10800,
+   "total": 2582968,
+   "infrastructure_share": -0.9336116436595421
+  },
+  {
+   "policy": "optimistic",
+   "archetype": "pending_settle",
+   "n": 174,
+   "infrastructure": 1442800,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 1442800,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "optimistic",
+   "archetype": "stale_processor",
+   "n": 78,
+   "infrastructure": 423520,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 423520,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "optimistic",
+   "archetype": "unresolvable",
+   "n": 114,
+   "infrastructure": -435118,
+   "policy_gap": 887094,
+   "irreducible": 2794800,
+   "total": 3246776,
+   "infrastructure_share": -0.134015404820043
+  },
+  {
+   "policy": "react",
+   "archetype": "duplicate_settlement",
+   "n": 114,
+   "infrastructure": 505300,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 505300,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "react",
+   "archetype": "late_chargeback",
+   "n": 39,
+   "infrastructure": 511680,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 511680,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "react",
+   "archetype": "lost_settlement",
+   "n": 135,
+   "infrastructure": 2070360,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 2070360,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "react",
+   "archetype": "partial_ledger",
+   "n": 96,
+   "infrastructure": 1436480,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 1436480,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "react",
+   "archetype": "pending_fail",
+   "n": 135,
+   "infrastructure": 612680,
+   "policy_gap": 2242440,
+   "irreducible": 215520,
+   "total": 3070640,
+   "infrastructure_share": 0.19952843706849385
+  },
+  {
+   "policy": "react",
+   "archetype": "pending_fail_hard",
+   "n": 78,
+   "infrastructure": 52200,
+   "policy_gap": -10800,
+   "irreducible": 10800,
+   "total": 52200,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "react",
+   "archetype": "pending_settle",
+   "n": 174,
+   "infrastructure": 1490920,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 1490920,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "react",
+   "archetype": "stale_processor",
+   "n": 78,
+   "infrastructure": 986280,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 986280,
+   "infrastructure_share": 1.0
+  },
+  {
+   "policy": "react",
+   "archetype": "unresolvable",
+   "n": 114,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 2794800,
+   "total": 2794800,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "duplicate_settlement",
+   "n": 114,
+   "infrastructure": 1325740,
+   "policy_gap": 256560,
+   "irreducible": 0,
+   "total": 1582300,
+   "infrastructure_share": 0.8378562851545219
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "late_chargeback",
+   "n": 39,
+   "infrastructure": 510120,
+   "policy_gap": 8400,
+   "irreducible": 0,
+   "total": 518520,
+   "infrastructure_share": 0.983800046285582
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "lost_settlement",
+   "n": 135,
+   "infrastructure": 4379100,
+   "policy_gap": 41280,
+   "irreducible": 0,
+   "total": 4420380,
+   "infrastructure_share": 0.9906614363471014
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "partial_ledger",
+   "n": 96,
+   "infrastructure": 1847700,
+   "policy_gap": 233280,
+   "irreducible": 0,
+   "total": 2080980,
+   "infrastructure_share": 0.8878989706772771
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "pending_fail",
+   "n": 135,
+   "infrastructure": 1139880,
+   "policy_gap": 1534480,
+   "irreducible": 215520,
+   "total": 2889880,
+   "infrastructure_share": 0.39443852339889546
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "pending_fail_hard",
+   "n": 78,
+   "infrastructure": 54000,
+   "policy_gap": -5400,
+   "irreducible": 10800,
+   "total": 59400,
+   "infrastructure_share": 0.9090909090909091
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "pending_settle",
+   "n": 174,
+   "infrastructure": 3378700,
+   "policy_gap": 23340,
+   "irreducible": 0,
+   "total": 3402040,
+   "infrastructure_share": 0.9931394104713642
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "stale_processor",
+   "n": 78,
+   "infrastructure": 2809220,
+   "policy_gap": 14880,
+   "irreducible": 0,
+   "total": 2824100,
+   "infrastructure_share": 0.9947310647639956
+  },
+  {
+   "policy": "rule_based",
+   "archetype": "unresolvable",
+   "n": 114,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 2794800,
+   "total": 2794800,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "duplicate_settlement",
+   "n": 114,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 0,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "late_chargeback",
+   "n": 39,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 0,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "lost_settlement",
+   "n": 135,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 0,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "partial_ledger",
+   "n": 96,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 0,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "pending_fail",
+   "n": 135,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 215520,
+   "total": 215520,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "pending_fail_hard",
+   "n": 78,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 10800,
+   "total": 10800,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "pending_settle",
+   "n": 174,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 0,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "stale_processor",
+   "n": 78,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 0,
+   "total": 0,
+   "infrastructure_share": 0.0
+  },
+  {
+   "policy": "transactional",
+   "archetype": "unresolvable",
+   "n": 114,
+   "infrastructure": 0,
+   "policy_gap": 0,
+   "irreducible": 2794800,
+   "total": 2794800,
+   "infrastructure_share": 0.0
+  }
+ ]
+}
