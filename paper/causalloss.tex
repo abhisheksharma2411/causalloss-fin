@@ -34,9 +34,11 @@ policy's loss exactly three ways---what the faults cost it, what a better policy
 would have saved, and what no unprivileged policy avoids---with Shapley values
 distributing the first term across individual messages. On \nPlanted{} episodes
 whose causes are planted rather than derived, across \nPolicies{} policies,
-agent-only intervention identifies the true cause in \agentOnlyInfra\%\ of
-infrastructure episodes, misfiles \agentOnlyMisattr\%\ of them, and charges
-\$\agentOnlyDollars{} of infrastructure-caused loss to the agent. Repairing what
+agent-only intervention identifies no infrastructure cause at all, which follows
+from its causal model containing no infrastructure variable and is therefore
+structural rather than empirical. What the experiments measure is the size of
+the consequence: it misfiles \agentOnlyMisattr\%\ of infrastructure episodes and
+charges \$\agentOnlyDollars{} of infrastructure-caused loss to the agent. Repairing what
 it names recovers \agentOnlyRepair\%\ of the available loss; repairing what a
 minimal sufficient set names recovers \minSuffRepair\%, at \minSuffReplays{}
 replays per episode against \agentOnlyReplays. Scoring messages one at a time is
@@ -75,7 +77,7 @@ around 14\% accurate at the step level~\cite{car}.
 
 They also share an assumption. Each intervenes on the agent's steps and on
 nothing else. In an environment where the infrastructure is itself a causal
-agent---messages delayed, duplicated, dropped, reordered---a causal model with
+agent, messages delayed, duplicated, dropped, reordered, a causal model with
 no infrastructure variable cannot name an infrastructure cause. Asked to
 explain the episode above, the best it can do is nominate the step that acted
 on information the agent never received. That is not a defect of execution. It
@@ -120,8 +122,8 @@ dollars, and in loss that repairing the named cause fails to recover
 
 As in the benchmark this builds on, no language model was evaluated: no model
 endpoint was available. The policies whose failures we attribute are
-deterministic procedures, which sharpens the causal analysis---interventions are
-exact rather than sampled---and narrows what the results say about agents that
+deterministic procedures, which sharpens the causal analysis, interventions are
+exact rather than sampled, and narrows what the results say about agents that
 reason. Section~\ref{sec:limits} is explicit about the difference.
 
 \section{Related work}
@@ -146,8 +148,8 @@ incompleteness costs.
 the cause of an outcome is the subject of the structural-model account of
 actual causality~\cite{halpern2016}, in which a cause is a but-for cause
 relative to a contingency, and of the associated notion of degree of
-responsibility~\cite{chockler2004}. Overdetermination---two events, either
-sufficient alone, so neither is necessary---is the standard hard case, and it is
+responsibility~\cite{chockler2004}. Overdetermination, two events, either
+sufficient alone, so neither is necessary, is the standard hard case, and it is
 the one our third stratum is built from. We take the practical rather than the
 philosophical route: a minimal sufficient set is the smallest set of messages
 whose joint repair removes the loss.
@@ -159,8 +161,8 @@ al.~\cite{shapleyrca} show that the \emph{asymmetric} variant, which relaxes the
 symmetry axiom to encode a causal ordering, produces counter-intuitive
 attributions outside a restricted model class. We use the standard symmetric
 value, and for one specific job: dividing the infrastructure share across
-individual messages in a way that survives interaction. The share itself is not estimated by Shapley---it comes from the
-exact identity---so the efficiency axiom is a check on the implementation
+individual messages in a way that survives interaction. The share itself is not estimated by Shapley, it comes from the
+exact identity, so the efficiency axiom is a check on the implementation
 rather than a modelling assumption.
 
 \textbf{The environment.} FinalityBench~\cite{finalitybench} supplies the
@@ -173,7 +175,7 @@ and every result here records which revision it ran against.
 \section{The setting}
 
 A FinalityBench episode is one order. A capture is submitted, and its terminal
-outcome---settled or failed---becomes a fact at some later instant that no tool
+outcome, settled or failed, becomes a fact at some later instant that no tool
 can reveal early. Four systems learn about events through delivery streams that
 a seeded fault engine perturbs in six ways: delay, duplication, loss,
 reordering, half-committed ledger postings, and stale reads. An agent has
@@ -195,8 +197,8 @@ decompose a realised schedule into named instances by diffing it against the
 fault-free schedule for the same case and seed: every way the two differ is an
 instance, and repairing all of them returns the fault-free world exactly. There
 are \meanInstances{} instances per episode on average and at most
-\maxInstances. An archetype's defining fault---the settlement the processor
-never hears about---appears as an instance too, flagged as structural, so it can
+\maxInstances. An archetype's defining fault, the settlement the processor
+never hears about, appears as an instance too, flagged as structural, so it can
 be intervened on rather than being baked into the background.
 
 A first version decomposed per family instead, building each single-family
@@ -257,7 +259,7 @@ rather than a random draw, nothing else changes.
 
 \emph{Substituting a decision.} Force a chosen action at step $k$ and let the
 policy continue from there, seeing the consequences. We report the effect of a
-step as the loss avoided by its best alternative---a regret---rather than as a
+step as the loss avoided by its best alternative, a regret, rather than as a
 distribution shift, because the policies here are deterministic and resampling
 under the same policy, the usual move, changes nothing at all.
 
@@ -277,7 +279,16 @@ L(\pi, w) = \underbrace{L(\pi,w) - L(\pi,w_0)}_{\text{infrastructure}}
 \end{equation}
 
 The terms telescope, so the split is exact and there is no residual in which a
-modelling error could hide. This matters more than it might appear: a residual
+modelling error could hide.
+
+Two of the three terms can be negative, and the word "share" oversells them.
+The infrastructure term goes negative when faults help a policy on net, which
+happens and is reported in Section~\ref{sec:results}. The policy term is a gap
+to the best \emph{implementable} policy rather than to a per-task optimum, so it
+goes negative whenever the subject beats that baseline on a task: on
+\negPolicyRate\%\ of episodes, reaching \$\negPolicyWorst. Read the three
+numbers as a signed decomposition that sums to the loss, not as a partition into
+non-negative parts. This matters more than it might appear: a residual
 term is precisely where unattributed loss would accumulate, and unattributed
 loss in an agent-analysis tool gets read as the agent's fault. The identity
 holds on \decompExact{} episodes checked, and the test suite asserts it rather
@@ -303,8 +314,8 @@ which executes a harmful action is rarely the step that decided on
 it~\cite{car}.
 
 \textbf{First divergence.} Blame the earliest message that arrived late or not
-at all. A plausible operations reflex---find the first thing that looks wrong
-and call it the cause---which ignores entirely whether that message mattered.
+at all. A plausible operations reflex, find the first thing that looks wrong
+and call it the cause, which ignores entirely whether that message mattered.
 
 \textbf{Agent-only intervention.} Substitute each of the agent's steps in turn,
 run forward under the same policy, and rank the steps by loss avoided. This is
@@ -472,14 +483,14 @@ escalates, and the merchant ends \$28.00 behind the reference.
 The three-way split assigns the whole \$28.00 to infrastructure: in a repaired
 world this policy solves the task exactly, so its policy and irreducible shares
 are zero. Shapley then divides that \$28.00 between two messages at \$14.00
-each---the dropped settlement to the processor, and a reordering at the bank
-feed---and gives zero to the other five. Neither of the two is sufficient alone:
+each, the dropped settlement to the processor, and a reordering at the bank
+feed, and gives zero to the other five. Neither of the two is sufficient alone:
 with either one repaired the policy recovers, which is why they split the
 credit evenly rather than one taking all of it.
 
 Agent-only intervention, run on the same episode, reports that the agent should
 have shipped at step~0 and assigns \$28.00 to that decision. The recommendation
-is not wrong as advice---shipping would indeed have been better---but as an
+is not wrong as advice, shipping would indeed have been better, but as an
 explanation it inverts the case. At step~0 the agent had no evidence that the
 money had arrived, and the reason it had none is the first of the two messages
 Shapley named.
@@ -575,8 +586,8 @@ full per-message allocation is the deliverable.
 \label{sec:limits}
 
 \textbf{No language model was evaluated.} The policies are deterministic
-procedures. This is a real gain for the causal analysis---an intervention is
-exact, and there is no sampling noise to average away---and a real loss for
+procedures. This is a real gain for the causal analysis, an intervention is
+exact, and there is no sampling noise to average away, and a real loss for
 external validity. Whether these conclusions hold when the agent is
 stochastic, and whether a resampling intervention behaves like our substitution
 intervention, is untested here. The environment's model adapter is written and

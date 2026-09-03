@@ -1,9 +1,11 @@
 {
  "provenance": {
   "version": "1.0.0",
-  "git": "unversioned",
+  "git_commit": "5d68ad51b41214acee4926c00e7491db7734c0d9",
+  "git_dirty": "yes",
+  "command": "run_all.py",
   "python": "3.14.7",
-  "generated_at": "2026-09-02T23:44:04+00:00",
+  "generated_at": "2026-09-03T04:41:47+00:00",
   "finalitybench_version": "1.0.0",
   "finalitybench_path": "/Users/Abhishek.Sharma/Downloads/papers/finalitybench",
   "finalitybench_git": "adb0d19",
@@ -14,37 +16,37 @@
   {
    "method": "last_action",
    "replays_per_episode": 1.0,
-   "ms_per_episode": 0.1761909831354084
+   "ms_per_episode": 0.1708478657140707
   },
   {
    "method": "first_divergence",
    "replays_per_episode": 1.0,
-   "ms_per_episode": 0.1702402335164758
+   "ms_per_episode": 0.1677693823391261
   },
   {
    "method": "minimal_sufficient",
    "replays_per_episode": 2.3,
-   "ms_per_episode": 0.3861368997604586
+   "ms_per_episode": 0.38327081614018726
   },
   {
    "method": "fault_single",
    "replays_per_episode": 8.433333333333334,
-   "ms_per_episode": 1.4027048331627157
+   "ms_per_episode": 1.374689516039022
   },
   {
    "method": "agent_only",
    "replays_per_episode": 70.53333333333333,
-   "ms_per_episode": 7.530762499421447
+   "ms_per_episode": 7.390068116122468
   },
   {
    "method": "joint_greedy",
    "replays_per_episode": 77.96666666666667,
-   "ms_per_episode": 8.777781932925185
+   "ms_per_episode": 8.738957616878906
   },
   {
    "method": "joint_shapley",
    "replays_per_episode": 280.15,
-   "ms_per_episode": 42.23337296571117
+   "ms_per_episode": 41.87720558475121
   }
  ]
 }

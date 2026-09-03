@@ -32,6 +32,12 @@ def main() -> None:
         factory = policy_factory(subject)
         totals = {"infrastructure": 0, "policy": 0, "irreducible": 0, "total": 0}
         n = 0
+        # The policy term is a gap to the best *implementable* policy, not to a
+        # per-task optimum, so it goes negative whenever the subject beats that
+        # baseline on a task. How often that happens is reported rather than
+        # left for a reader to discover.
+        neg_policy = 0
+        worst_policy = 0
         for case in corpus.cases:
             for seed in seeds:
                 world = World(case, factory, seed, profile)
@@ -41,6 +47,9 @@ def main() -> None:
                 shares = factual.shares()
                 for key in totals:
                     totals[key] += shares[key]
+                if shares["policy"] < 0:
+                    neg_policy += 1
+                    worst_policy = min(worst_policy, shares["policy"])
                 n += 1
                 bucket = by_archetype.setdefault(
                     (subject, case.archetype),
@@ -51,6 +60,8 @@ def main() -> None:
 
         denom = max(1, totals["total"])
         rows.append({
+            "negative_policy_share_rate": neg_policy / max(1, n),
+            "most_negative_policy_share": worst_policy,
             "policy": subject, "n_episodes": n,
             "mean_loss": totals["total"] / n,
             "infrastructure": totals["infrastructure"], "policy_gap": totals["policy"],

@@ -1,9 +1,11 @@
 {
  "provenance": {
   "version": "1.0.0",
-  "git": "unversioned",
+  "git_commit": "5d68ad51b41214acee4926c00e7491db7734c0d9",
+  "git_dirty": "yes",
+  "command": "run_all.py",
   "python": "3.14.7",
-  "generated_at": "2026-09-02T23:44:01+00:00",
+  "generated_at": "2026-09-03T04:41:43+00:00",
   "finalitybench_version": "1.0.0",
   "finalitybench_path": "/Users/Abhishek.Sharma/Downloads/papers/finalitybench",
   "finalitybench_git": "adb0d19",
@@ -23,6 +25,8 @@
  "decomposition_exact": "3852/3852",
  "rows": [
   {
+   "negative_policy_share_rate": 0.06853582554517133,
+   "most_negative_policy_share": -144260,
    "policy": "optimistic",
    "n_episodes": 963,
    "mean_loss": 16659.68535825545,
@@ -35,6 +39,8 @@
    "irreducible_share": 0.1883106549865093
   },
   {
+   "negative_policy_share_rate": 0.003115264797507788,
+   "most_negative_policy_share": -1800,
    "policy": "rule_based",
    "n_episodes": 963,
    "mean_loss": 21362.82450674974,
@@ -47,6 +53,8 @@
    "irreducible_share": 0.14685306527191772
   },
   {
+   "negative_policy_share_rate": 0.006230529595015576,
+   "most_negative_policy_share": -1800,
    "policy": "react",
    "n_episodes": 963,
    "mean_loss": 13415.015576323987,
@@ -59,6 +67,8 @@
    "irreducible_share": 0.23385707186349047
   },
   {
+   "negative_policy_share_rate": 0.0,
+   "most_negative_policy_share": 0,
    "policy": "transactional",
    "n_episodes": 963,
    "mean_loss": 3137.196261682243,
