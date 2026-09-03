@@ -22,3 +22,12 @@ keywords:
   - Shapley value
   - actual causality
   - payment systems
+references:
+  - type: software
+    title: "FinalityBench: an effect-level benchmark for agent decisions under delayed and conflicting financial finality"
+    authors:
+      - family-names: Sharma
+        given-names: Abhishek
+        orcid: "https://orcid.org/0009-0007-1103-2103"
+    doi: 10.5281/zenodo.22262591
+    year: 2026
