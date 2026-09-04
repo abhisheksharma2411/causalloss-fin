@@ -7,7 +7,7 @@
   "python": "3.14.7",
   "generated_at": "2026-09-03T04:41:47+00:00",
   "finalitybench_version": "1.0.0",
-  "finalitybench_path": "/Users/Abhishek.Sharma/Downloads/papers/finalitybench",
+  "finalitybench_location": "../finalitybench",
   "finalitybench_git": "adb0d19",
   "experiment": "e6_cost"
  },

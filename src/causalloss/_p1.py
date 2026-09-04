@@ -79,9 +79,19 @@ def p1_provenance() -> dict[str, str]:
         revision = out.stdout.strip() or "unknown"
     except Exception:
         pass
+    # The absolute path is deliberately not recorded. It published the
+    # author's local directory layout into every result file and told a reader
+    # nothing: the version and the commit identify which P1 produced the
+    # numbers, and where it happened to sit on one machine does not.
+    if source.is_relative_to(ROOT):
+        location = f"./{source.relative_to(ROOT)}"
+    elif (ROOT / "vendor" / "finalitybench") in source.parents or source.name == "finalitybench":
+        location = "sibling checkout"
+    else:
+        location = "installed package"
     return {
         "finalitybench_version": finalitybench.__version__,
-        "finalitybench_path": str(source),
+        "finalitybench_location": location,
         "finalitybench_git": revision,
     }
 
