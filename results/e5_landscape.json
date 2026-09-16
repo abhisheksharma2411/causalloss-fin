@@ -1,14 +1,14 @@
 {
  "provenance": {
   "version": "1.0.0",
-  "git_commit": "5d68ad51b41214acee4926c00e7491db7734c0d9",
-  "git_dirty": "yes",
+  "git_commit": "8dda70a7f6c11f3d94686703ac0116e26bd3c297",
+  "git_dirty": "no",
   "command": "run_all.py",
   "python": "3.14.7",
-  "generated_at": "2026-09-03T04:41:43+00:00",
+  "generated_at": "2026-09-16T01:47:57+00:00",
   "finalitybench_version": "1.0.0",
-  "finalitybench_location": "../finalitybench",
-  "finalitybench_git": "adb0d19",
+  "finalitybench_location": "sibling checkout",
+  "finalitybench_git": "0b01661",
   "experiment": "e5_landscape"
  },
  "seeds": [
