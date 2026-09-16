@@ -17,6 +17,29 @@ RESULTS = ROOT / "results"
 RESULTS.mkdir(exist_ok=True)
 
 
+#: Paths that are outputs of a run rather than inputs to it. A run writes its
+#: own results, and on the second experiment of a batch the first one's output
+#: would otherwise make the tree look dirty and mark every later result as
+#: irreproducible. What has to be clean is the code and the data that went in.
+GENERATED = ("results/", "figures/", "paper/")
+
+
+def _dirty_inputs(root) -> str:
+    """Uncommitted changes outside the generated directories."""
+    out = subprocess.run(
+        ["git", "-C", str(root), "status", "--porcelain"],
+        capture_output=True, text=True, timeout=10,
+    ).stdout.splitlines()
+    changed = []
+    for line in out:
+        path = line[3:].strip().strip('"')
+        if " -> " in path:
+            path = path.split(" -> ")[-1]
+        if not any(path.startswith(g) for g in GENERATED):
+            changed.append(path)
+    return "; ".join(sorted(changed))
+
+
 def git_revision() -> dict[str, str]:
     """Full commit SHA and whether the tree was dirty.
 
@@ -31,10 +54,7 @@ def git_revision() -> dict[str, str]:
                               capture_output=True, text=True, timeout=5)
         if head.returncode == 0 and head.stdout.strip():
             info["commit"] = head.stdout.strip()
-        status = subprocess.run(["git", "-C", str(ROOT), "status", "--porcelain"],
-                                capture_output=True, text=True, timeout=5)
-        if status.returncode == 0:
-            info["dirty"] = "yes" if status.stdout.strip() else "no"
+        info["dirty"] = "yes" if _dirty_inputs(ROOT) else "no"
     except Exception:
         pass
     return info
