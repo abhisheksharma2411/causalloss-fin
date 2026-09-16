@@ -99,7 +99,7 @@ individual infrastructure faults in the same causal model, on the same episode,
 with exact common random numbers (Section~\ref{sec:scm}).
 
 \item \textbf{An exact three-way split.} A telescoping identity decomposes any
-policy's loss into infrastructure, policy and irreducible shares with no
+policy's loss into infrastructure, policy and reference-policy residuals with no
 residual term. It holds on \decompExact{} episodes checked
 (Section~\ref{sec:split}).
 
@@ -148,9 +148,13 @@ actual causality~\cite{halpern2016}, in which a cause is a but-for cause
 relative to a contingency, and of the associated notion of degree of
 responsibility~\cite{chockler2004}. Overdetermination, two events, either
 sufficient alone, so neither is necessary, is the standard hard case, and it is
-the one our third stratum is built from. We take the practical rather than the
-philosophical route: a minimal sufficient set is the smallest set of messages
-whose joint repair removes the loss.
+the one our third stratum is built from. We take the practical rather than the philosophical route: a minimal
+sufficient set is the smallest set of messages whose joint repair removes the
+loss. The search stops at \searchCap{} messages, which would make a perfect
+recovery figure conditional on the cases small enough to fit inside that
+bound. It does not: over \ciEpisodes{} episodes the largest set found holds
+\largestRepairSet{} messages and the cap binds on \capBound{} of them, so the
+recovery figure is a property of the method and not of the cap.
 
 \textbf{Shapley allocation.} Distributing a total among contributors so that
 the parts sum to the whole is the Shapley value~\cite{shapley1953}. It has been
@@ -158,7 +162,7 @@ carried into root-cause analysis, though not without warnings: Kelen et
 al.~\cite{shapleyrca} show that the \emph{asymmetric} variant, which relaxes the
 symmetry axiom to encode a causal ordering, produces counter-intuitive
 attributions outside a restricted model class. We use the standard symmetric
-value, and for one specific job: dividing the infrastructure share across
+value, and for one specific job: dividing the infrastructure effect across
 individual messages in a way that survives interaction. The share itself is not estimated by Shapley, it comes from the
 exact identity, so the efficiency axiom is a check on the implementation
 rather than a modelling assumption.
@@ -281,21 +285,25 @@ L(\pi, w) = \underbrace{L(\pi,w) - L(\pi,w_0)}_{\text{infrastructure}}
 The terms telescope, so the split is exact and there is no residual in which a
 modelling error could hide.
 
-Two of the three terms can be negative, and the word "share" oversells them.
-The infrastructure term goes negative when faults help a policy on net, which
-happens and is reported in Section~\ref{sec:results}. The policy term is a gap
+Two of the three terms can be negative, so none of them is called a share.
+They are the \emph{infrastructure effect}, the \emph{policy differential} and
+the \emph{reference-policy residual}, and ``share'' is kept for the Shapley
+division of the first of those, which is a division of a fixed total into
+parts that sum to it. The infrastructure effect goes negative when faults help
+a policy on net, which happens and is reported in Section~\ref{sec:results}. The policy term is a gap
 to the best \emph{implementable} policy rather than to a per-task optimum, so it
 goes negative whenever the subject beats that baseline on a task: on
 \negPolicyRate\%\ of episodes, reaching \$\negPolicyWorst. Read the three
 numbers as a signed decomposition that sums to the loss, not as a partition into
 non-negative parts. This matters more than it might appear: a residual
 term is precisely where unattributed loss would accumulate, and unattributed
-loss in an agent-analysis tool gets read as the agent's fault. The identity
-holds on \decompExact{} episodes checked, and the test suite asserts it rather
-than assuming it.
+loss in an agent-analysis tool gets read as the agent's fault. The identity holds on \decompExact{} episodes checked, and the test suite
+asserts it rather than assuming it. Being algebra, it is reported without an
+interval: a confidence band around an identity would say nothing.
 
-Shapley values then distribute the infrastructure share across individual
-messages, with coalition value $v(S) = L(\pi, w_0) - L(\pi, S)$. Exact below
+Shapley values then distribute the infrastructure effect across individual
+messages, and those are shares: non-negative in the additive case and summing
+to the effect, with coalition value $v(S) = L(\pi, w_0) - L(\pi, S)$. Exact below
 thirteen instances, permutation-sampled above; the sampled estimate sits within
 \shapleyError\%\ of the exact one in $L_1$.
 
@@ -324,7 +332,7 @@ REFLECT~\cite{reflect} reduced to its essentials and transplanted into this
 environment: the interventions are exact rather than sampled because the policy
 is deterministic, which if anything makes it stronger than its published
 counterparts. Its causal model contains no infrastructure variable, so all of
-its causes are agent steps and its infrastructure share is identically zero.
+its causes are agent steps and its infrastructure effect is identically zero.
 
 \textbf{Single-fault repair.} Repair each message on its own, rank by loss
 avoided. The natural first thing to try once fault interventions are available,
@@ -342,11 +350,11 @@ individual effects. Included to show that combining the two sides naively is
 not enough: its shares do not sum to the loss, because a step regret and a
 message repair are not measured on the same scale.
 
-\textbf{Joint Shapley.} Take the agent and infrastructure shares from the exact
-identity of Section~\ref{sec:split}, then distribute the infrastructure share
+\textbf{Joint Shapley.} Take the agent and infrastructure effects from the exact
+identity of Section~\ref{sec:split}, then distribute the infrastructure effect
 across individual messages by Shapley value, and rank within whichever side the
 identity says is responsible. Ranking the two sides against each other by raw score does not work. Shapley
-values sum to the infrastructure share while step regrets do not live on that
+values sum to the infrastructure effect while step regrets do not live on that
 scale, so a single step scored at the whole loss outranks two messages that
 split it. An earlier version of this method lost every overdetermined episode
 for exactly that reason.
@@ -397,11 +405,26 @@ exactly when the agent is the cause.}
 \subsection{Naming the cause}
 
 Table~\ref{tab:accuracy} and Figure~\ref{fig:accuracy} give identification
-accuracy. Agent-only intervention identifies the true cause on
-\agentOnlyInfra\%\ of infrastructure episodes and 100\% of agent episodes; its
-overall verdict accuracy, \agentOnlyVerdict\%, is the base rate of episodes in
-which the agent happens to be at fault. It is not that the method performs
-poorly. It answers a different question correctly.
+accuracy, and one row of it is not an experimental result at all. Agent-only
+intervention identifies the true cause on \agentOnlyInfra\%\ of infrastructure
+episodes. That figure is zero and had to be: a causal model whose only
+intervenable variables are the agent's steps contains no variable naming a
+message, so no infrastructure cause is expressible in its output, whatever the
+episode. It is a proposition about the method's model, it needs no corpus, and
+running one cannot refute it.
+
+What the corpus measures is the consequence, which does not follow from the
+proposition and could have come out otherwise. How much money gets misfiled
+(\$\agentOnlyDollars, on \agentOnlyMisattr\%\ of infrastructure episodes), how
+little repairing the named cause recovers (\agentOnlyRepair\%), how often
+interaction defeats one-at-a-time scoring (\nonAdditiveCI), and what the
+alternatives cost in replays are all quantities of this environment and this
+generator. A benchmark where infrastructure faults were rare or cheap would
+give the same proposition and much smaller numbers.
+
+The method's overall verdict accuracy, \agentOnlyVerdict\%, is the base rate
+of episodes in which the agent happens to be at fault. It is not that the
+method performs poorly. It answers a different question correctly.
 
 Single-fault repair is exact on the single and conjunctive strata and scores
 \faultSingleOverdet\%\ on the overdetermined one, which is the arithmetic: when
@@ -465,10 +488,19 @@ the right one.
 
 \subsection{How often interactions matter}
 
-Across \nonAdditiveRate\%\ of episodes with infrastructure loss, repairing each message on its own does not account for the whole
-infrastructure share. The mean gap is \$\interactionGap. On \overdetRate\%\ every single-repair score is
-zero while the total is not. Interaction is not a corner case here; it is a
-quarter of the episodes.
+Across \nonAdditiveCI{} of episodes with infrastructure loss, repairing each
+message on its own does not account for the whole infrastructure effect. The
+mean gap is \$\interactionGap. On \overdetCI{} every single-repair score is
+zero while the total is not. Interval are percentile bootstraps over
+\ciTasks{} tasks covering \ciEpisodes{} episodes, resampling tasks rather than
+episodes because episodes from one task share its amount, archetype and fault
+draw. The algebraic identity needs no such interval and is not given one;
+these are estimates of how often a phenomenon occurs in a generated
+population, which is a different kind of claim.
+
+Interaction is not a corner case here. It is roughly a quarter of the
+episodes, and the interval says the sample constrains that to between a
+quarter and a third.
 
 \subsection{One episode, end to end}
 
@@ -481,7 +513,7 @@ reference.
 
 The three-way split assigns the whole \$\exLoss{} to infrastructure: in a
 repaired world this policy solves the task exactly, so its policy and
-irreducible shares are zero. Shapley then divides that \$\exLoss{} between two
+reference-policy residuals are zero. Shapley then divides that \$\exLoss{} between two
 messages at \$\exShare{} each, the dropped settlement to the processor, and a
 reordering at the bank feed, and gives zero to the other \exZeroed{}. Neither of the two is sufficient alone:
 with either one repaired the policy recovers, which is why they split the
@@ -516,12 +548,12 @@ Figure~\ref{fig:landscape}), the split says different things about different
 policies. For the rule-based procedure, \ruleInfra\%\ of its loss is the
 environment's doing. For the ReAct loop, \reactInfra\%\ is infrastructure and
 \reactPolicy\%\ is its own. For the finality-gated runtime the infrastructure
-and policy shares are both zero and \gateIrreducible\%\ of its \$\gateMeanLoss{} mean loss is irreducible. It loses only what no
+and policy differentials are both zero and \gateIrreducible\%\ of its \$\gateMeanLoss{} mean loss is irreducible. It loses only what no
 unprivileged policy can avoid, which the benchmark's own results reach by a
 different route.
 
 The interesting row is the optimistic policy, which ships as soon as the ledger
-shows any activity. Its infrastructure share is \optInfra\%, and it is \emph{negative}.
+shows any activity. Its infrastructure effect is \optInfra\%, and it is \emph{negative}.
 Faults help it, on net. A policy that acts on the first sign of payment is
 occasionally saved by a message going missing, because the message it did not
 receive is the one it would have acted on. We would not have predicted the sign
@@ -544,7 +576,7 @@ Table~\ref{tab:archetype} breaks the same decomposition down by situation, and
 it lines up with what the benchmark says about itself from the other direction.
 Infrastructure dominates on the archetypes built around a message going missing,
 arriving stale, or posting twice. These are situations in which a competent
-policy is defeated by its inputs. The irreducible share concentrates on the
+policy is defeated by its inputs. The reference-policy residual concentrates on the
 cases whose outcome lands after the ship-by deadline, where repaired plumbing
 would not help because the fact itself has not happened yet. The practical
 reading is that these two groups call for different remedies: the first is
@@ -576,9 +608,9 @@ deterministic. For a stochastic agent the two come apart, and the published
 methods we compare against are built for that case; how the comparison moves
 there is an open question we cannot settle from inside this environment.
 
-\textbf{Cheap methods can be exact.} The best accuracy-per-replay in
-Table~\ref{tab:repair} belongs to minimal sufficient sets, at
-\minSuffReplays{} replays. The expensive method is worth its cost only when the
+\textbf{Cheap methods can be exact.} The best accuracy-per-replay in Table~\ref{tab:repair} belongs to minimal
+sufficient sets, at \minSuffReplays{} replays, and the \searchCap-message cap
+never bound on any episode searched. The expensive method is worth its cost only when the
 full per-message allocation is the deliverable.
 
 \section{Limitations}
@@ -608,7 +640,7 @@ operator would recognise, not the whole action space. A better alternative
 outside the menu would raise the measured effect of a step, which would make
 agent-only attribution look better, not worse.
 
-\textbf{The reference policy defines the irreducible share.} We use the
+\textbf{The reference policy defines the reference-policy residual.} We use the
 benchmark's strongest implementable policy. A stronger one would move loss from
 the irreducible column into the policy column for everyone.
 
@@ -625,8 +657,7 @@ repairing what it names recovers none of it.
 \section*{Artifact availability}
 
 Code, the planted-episode generator and every result file are at
-\url{https://github.com/abhisheksharma2411/causalloss-fin}, archived at
-\textsc{doi} \texttt{ZENODO\_DOI\_PLACEHOLDER}. It consumes the released
+\url{https://github.com/abhisheksharma2411/causalloss-fin}. An archival DOI is forthcoming. It consumes the released
 FinalityBench artifact~\cite{finalitybench} rather than reimplementing it, and
 each result file records the revision it ran against. \texttt{make reproduce}
 runs the suite end to end from a clean tree.

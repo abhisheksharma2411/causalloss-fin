@@ -1,0 +1,56 @@
+{
+ "provenance": {
+  "version": "1.0.0",
+  "git_commit": "b2a6311514ddfe5fa3fad6938e37c8725510e1ad",
+  "git_dirty": "yes",
+  "command": "experiments/e9_uncertainty.py",
+  "python": "3.14.7",
+  "generated_at": "2026-09-16T01:40:01+00:00",
+  "finalitybench_version": "1.0.0",
+  "finalitybench_location": "sibling checkout",
+  "finalitybench_git": "0b01661"
+ },
+ "config": {
+  "n_tasks": 320,
+  "seed": 0,
+  "replicates": 2000,
+  "alpha": 0.05,
+  "max_episodes": 200,
+  "search_cap": 3,
+  "unit": "task"
+ },
+ "additive_rate": {
+  "point": 0.721875,
+  "low": 0.676923076923077,
+  "high": 0.7670807453416149,
+  "groups": 219,
+  "observations": 320,
+  "replicates": 2000
+ },
+ "non_additive_rate": {
+  "point": 0.27812499999999996,
+  "low": 0.23291925465838514,
+  "high": 0.32307692307692304,
+  "groups": 219,
+  "observations": 320
+ },
+ "overdetermined_rate": {
+  "point": 0.05625,
+  "low": 0.030959752321981424,
+  "high": 0.08653846153846154,
+  "groups": 219,
+  "observations": 320,
+  "replicates": 2000
+ },
+ "search_cap": {
+  "cap": 3,
+  "episodes_searched": 320,
+  "episodes_where_the_cap_bound": 0,
+  "largest_repair_set_found": 2,
+  "cap_never_bound": true,
+  "size_histogram": {
+   "1": 300,
+   "2": 20
+  }
+ }
+}
