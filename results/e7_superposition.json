@@ -1,0 +1,241 @@
+{
+ "provenance": {
+  "version": "1.0.0",
+  "git_commit": "e45252169c2b9a70013af55a153d3e4296f43bfe",
+  "git_dirty": "yes",
+  "command": "experiments/e7_superposition.py",
+  "python": "3.14.7",
+  "generated_at": "2026-09-16T00:00:57+00:00",
+  "finalitybench_version": "1.0.0",
+  "finalitybench_location": "sibling checkout",
+  "finalitybench_git": "ea5c643"
+ },
+ "config": {
+  "n_tasks": 320,
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "max_episodes": 240,
+  "families": [
+   "delay",
+   "duplicate",
+   "loss",
+   "partial_commit",
+   "reorder",
+   "stale_read"
+  ]
+ },
+ "failures": [
+  {
+   "task_id": "public-0001a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0001b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0002a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0002b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0003a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0003b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0004a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0006a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0006b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0007a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0010a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0010b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0011a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0012a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0012b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0013a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0013b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0014a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0014b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0015a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0015b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0016a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0016b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0018a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0018b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0019a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0019b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0020a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0021a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0021b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0022a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0022b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0023a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0023b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0024a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0025a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0025b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0026a",
+   "seed": 0,
+   "archetype": "pending_settle"
+  },
+  {
+   "task_id": "public-0026b",
+   "seed": 0,
+   "archetype": "pending_fail_hard"
+  },
+  {
+   "task_id": "public-0027a",
+   "seed": 0,
+   "archetype": "unresolvable"
+  }
+ ],
+ "headline": {
+  "episodes": 240,
+  "per_family_reproduced": 41,
+  "per_family_failed": 199,
+  "per_family_failure_rate": 0.8291666666666667,
+  "current_decomposition_reproduced": 240,
+  "current_decomposition_failed": 0,
+  "note": "the per-family decomposition assumes the families superpose; the current one diffs against the fault-free schedule and makes no such assumption"
+ }
+}

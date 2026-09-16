@@ -11,9 +11,12 @@ two schedules differ is some instance, and repairing all of them returns the
 fault-free schedule exactly.
 
 An earlier version decomposed per family instead, building each
-``only:<family>`` schedule and diffing that against the baseline. It failed
-round-trip on 149 of 240 episodes, and the reason is worth recording because it
-is a property of the environment rather than a coding slip: FinalityBench's
+``only:<family>`` schedule and diffing that against the baseline. Pooling those
+instances fails to reproduce the realised schedule on most episodes -- E7
+reconstructs the design and measures it, because the figure previously quoted
+here was carried from a commit message and was wrong -- and the reason is worth
+recording because it is a property of the environment rather than a coding
+slip: FinalityBench's
 fault families are drawn independently but do not *act* independently.
 Duplicate copies are placed relative to a delivery's already-delayed time, a
 partial commit propagates to copies that only exist when duplication fired, and

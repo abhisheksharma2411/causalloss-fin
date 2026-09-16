@@ -219,3 +219,51 @@ def test_every_method_runs_on_every_stratum(planted, corpus):
             attribution = run_method(name, world, trace)
             assert attribution.verdict in (AGENT, INFRA)
             assert attribution.replays >= 0
+
+
+def test_the_worked_example_still_has_the_shape_the_paper_describes():
+    """The paper narrates one episode. If the corpus moves, say so loudly.
+
+    The figures in that paragraph are generated now, so a changed corpus
+    updates them silently -- and silently updating "two messages at fourteen
+    dollars each" into something with three messages would leave the prose
+    describing a case that no longer exists.
+    """
+    from causalloss.attribution import INFRA, joint_shapley
+    from causalloss.scm import World
+    from finalitybench.tasks import build_corpus
+
+    case = next(c for c in build_corpus(n_tasks=320).cases
+                if c.task_id == "public-0123")
+    world = World(case, ReActPolicy, 0)
+    factual = world.factual()
+    infra = [c for c in joint_shapley(world, factual.trace).causes
+             if c.kind == INFRA]
+    nonzero = [c for c in infra if abs(c.score) > 0]
+
+    assert factual.infrastructure > 0
+    assert factual.infrastructure % 100 == 0
+    assert len(nonzero) == 2
+    assert len({round(c.score) for c in nonzero}) == 1
+    assert any("processor" in c.label for c in nonzero)
+
+
+def test_families_do_not_superpose():
+    """The reason the decomposition is not per family, as a test.
+
+    If pooled per-family instances started reproducing the realised schedule,
+    the simpler design would be sound and this paper's would be unnecessary
+    complexity -- worth failing a test over rather than discovering in review.
+    """
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments"))
+    from e7_superposition import superposed
+
+    from causalloss.faultgraph import round_trip_ok
+    from finalitybench.tasks import build_corpus
+
+    cases = build_corpus(n_tasks=320).cases[:40]
+    failures = sum(1 for c in cases if not superposed(c, 0))
+    assert failures > len(cases) // 2, failures
+    assert all(round_trip_ok(c, 0) for c in cases)

@@ -202,9 +202,11 @@ never hears about, appears as an instance too, flagged as structural, so it can
 be intervened on rather than being baked into the background.
 
 A first version decomposed per family instead, building each single-family
-schedule and diffing that against the baseline. It failed to reproduce the
-realised schedule on 149 of 240 episodes, and the reason is a property of the
-environment rather than a coding slip. FinalityBench draws its fault families
+schedule and diffing that against the baseline. Pooling those instances and
+applying them to the fault-free schedule fails to reproduce the realised one on
+\superFailed{} of \superEpisodes{} episodes (\superFailRate\%), where the
+decomposition described above reproduces all \superCurrentOk{}. The reason is
+a property of the environment rather than a coding slip. FinalityBench draws its fault families
 independently but they do not \emph{act} independently: duplicate copies are
 placed relative to a delivery's already-delayed arrival, a half-commit
 propagates to copies that exist only because duplication fired, and whether a
@@ -475,21 +477,22 @@ quarter of the episodes.
 \subsection{One episode, end to end}
 
 A concrete case makes the difference legible. Take a \texttt{lost\_settlement}
-task worth \$24.99 run under the ReAct loop. The capture settles, the
-settlement message to the processor is dropped, and seven fault instances are
-present in all. The policy polls the processor, never sees a settlement,
-escalates, and the merchant ends \$28.00 behind the reference.
+task worth \$\exOrder{} run under the ReAct loop. The capture settles, the
+settlement message to the processor is dropped, and \exInstances{} fault
+instances are present in all. The policy polls the processor, never sees a
+settlement, escalates, and the merchant ends \$\exLoss{} behind the
+reference.
 
-The three-way split assigns the whole \$28.00 to infrastructure: in a repaired
-world this policy solves the task exactly, so its policy and irreducible shares
-are zero. Shapley then divides that \$28.00 between two messages at \$14.00
-each, the dropped settlement to the processor, and a reordering at the bank
-feed, and gives zero to the other five. Neither of the two is sufficient alone:
+The three-way split assigns the whole \$\exLoss{} to infrastructure: in a
+repaired world this policy solves the task exactly, so its policy and
+irreducible shares are zero. Shapley then divides that \$\exLoss{} between two
+messages at \$\exShare{} each, the dropped settlement to the processor, and a
+reordering at the bank feed, and gives zero to the other \exZeroed{}. Neither of the two is sufficient alone:
 with either one repaired the policy recovers, which is why they split the
 credit evenly rather than one taking all of it.
 
 Agent-only intervention, run on the same episode, reports that the agent should
-have shipped at step~0 and assigns \$28.00 to that decision. The recommendation
+have shipped at step~0 and assigns \$\exAgentOnly{} to that decision. The recommendation
 is not wrong as advice, shipping would indeed have been better, but as an
 explanation it inverts the case. At step~0 the agent had no evidence that the
 money had arrived, and the reason it had none is the first of the two messages

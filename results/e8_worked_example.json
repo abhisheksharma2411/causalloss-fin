@@ -1,0 +1,49 @@
+{
+ "provenance": {
+  "version": "1.0.0",
+  "git_commit": "e45252169c2b9a70013af55a153d3e4296f43bfe",
+  "git_dirty": "yes",
+  "command": "experiments/e8_worked_example.py",
+  "python": "3.14.7",
+  "generated_at": "2026-09-16T00:04:19+00:00",
+  "finalitybench_version": "1.0.0",
+  "finalitybench_location": "sibling checkout",
+  "finalitybench_git": "ea5c643"
+ },
+ "config": {
+  "n_tasks": 320,
+  "seed": 0,
+  "policy": "react",
+  "task_id": "public-0123"
+ },
+ "shape_checks": {
+  "loss is a whole number of dollars": true,
+  "exactly two messages carry the credit": true,
+  "they carry it equally": true,
+  "a message to the processor is among them": true,
+  "the loss is attributed to infrastructure": true
+ },
+ "episode": {
+  "task_id": "public-0123",
+  "archetype": "lost_settlement",
+  "order_cents": 2499,
+  "infrastructure_cents": 2800,
+  "n_instances": 7,
+  "shapley_infra_causes": 2,
+  "shapley_nonzero": [
+   {
+    "cause": "message about event 4 never reached the processor",
+    "cents": 1399.9999999999995
+   },
+   {
+    "cause": "message about event 4 arrived at the bank out of order, 73 ticks off",
+    "cents": 1399.9999999999995
+   }
+  ],
+  "share_each_cents": 1400,
+  "instances_given_nothing": 5,
+  "agent_only_top_cents": 2800.0,
+  "agent_only_top_cause": "read_processor -> ship",
+  "agent_only_top_step": "step:0"
+ }
+}
