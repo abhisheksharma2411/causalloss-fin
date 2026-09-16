@@ -23,16 +23,16 @@
 When an agent handling a payment exception loses money, published counterfactual
 attribution will tell you which of its steps to blame. It will tell you that
 even when the answer is that a settlement message was dropped and the agent
-never had a chance. Methods in this line intervene on the agent's own
-steps---replace a step, re-run forward, measure the shift---and their causal
-models contain no variable for the environment, so every dollar they explain is
+never had a chance. Methods in this line intervene on the agent's own steps, replacing a step, re-
+running forward and measuring the shift. Their causal models contain no
+variable for the environment, so every dollar they explain is
 charged to a decision. We take a benchmark whose fault process is explicit and
 replayable, decompose each episode's realised delivery schedule into named,
 individually repairable messages, and intervene on \emph{both} the agent's
-choices and the infrastructure's. A telescoping identity then splits any
-policy's loss exactly three ways---what the faults cost it, what a better policy
-would have saved, and what no unprivileged policy avoids---with Shapley values
-distributing the first term across individual messages. On \nPlanted{} episodes
+choices and the infrastructure's. A telescoping identity then splits any policy's loss exactly three ways: what
+the faults cost it, what a better policy would have saved, and what no
+unprivileged policy avoids. Shapley values distribute the first term across
+individual messages. On \nPlanted{} episodes
 whose causes are planted rather than derived, across \nPolicies{} policies,
 agent-only intervention identifies no infrastructure cause at all, which follows
 from its causal model containing no infrastructure variable and is therefore
@@ -44,8 +44,8 @@ minimal sufficient set names recovers \minSuffRepair\%, at \minSuffReplays{}
 replays per episode against \agentOnlyReplays. Scoring messages one at a time is
 not merely imprecise: \nonAdditiveRate\%\ of episodes do not decompose
 additively, and on overdetermined ones every single-repair score is zero.
-Applied without planting, the split says something uncomfortable---for one
-policy the infrastructure's net contribution is \emph{negative}, because faults
+Applied without planting, the split says something uncomfortable. For one policy the infrastructure's
+net contribution is \emph{negative}, because faults
 that hide information sometimes stop it from acting on it.
 \end{abstract}
 
@@ -85,9 +85,8 @@ is a property of the model, and it is the kind of thing that is easy to miss
 until the environment is one where the answer is checkable.
 
 This paper makes it checkable. We build on FinalityBench~\cite{finalitybench},
-an executable benchmark in which four financial systems---payment processor,
-double-entry ledger, ERP, bank feed---are fed independently faulted delivery
-streams derived from a hidden canonical event log, and agents are graded on
+an executable benchmark in which four financial systems (payment processor, double-entry ledger, ERP,
+bank feed) are fed independently faulted delivery streams derived from a hidden canonical event log, and agents are graded on
 executed monetary effect. Its fault process is explicit, seeded and replayable,
 which is what makes the counterfactual "what if that message had arrived"
 executable rather than hypothetical.
@@ -105,9 +104,8 @@ residual term. It holds on \decompExact{} episodes checked
 (Section~\ref{sec:split}).
 
 \item \textbf{A decomposition of the fault process into repairable units},
-together with the finding that FinalityBench's fault families compose rather
-than superpose---so per-family attribution is unsound, and we say why
-(Section~\ref{sec:faults}).
+together with the finding that FinalityBench's fault families compose instead of superposing, so per-family
+attribution is unsound, and we say why (Section~\ref{sec:faults}).
 
 \item \textbf{Planted ground truth in four strata}, including the
 overdetermined case that single-effect scoring provably cannot handle, with
@@ -212,9 +210,9 @@ placed relative to a delivery's already-delayed arrival, a half-commit
 propagates to copies that exist only because duplication fired, and whether a
 reorder swap is eligible at all depends on times that delay has already moved.
 Families that compose cannot be attributed by superposition. The family label
-therefore annotates an instance rather than defining it, and the label is
-assigned by a but-for test taken in context---remove that family from the full
-profile and ask whether this delivery still arrives when it did. Asked the
+therefore annotates an instance rather than defining it, and the label is assigned by a but-for test taken in context: remove that
+family from the full profile and ask whether this delivery still arrives when
+it did. Asked the
 naive way, in isolation, reordering appears never to fire at all; asked in
 context it accounts for a fifth of the moved deliveries, because the swaps it
 makes only become possible once delay has bunched arrivals together.
@@ -347,11 +345,11 @@ message repair are not measured on the same scale.
 \textbf{Joint Shapley.} Take the agent and infrastructure shares from the exact
 identity of Section~\ref{sec:split}, then distribute the infrastructure share
 across individual messages by Shapley value, and rank within whichever side the
-identity says is responsible. Ranking the two sides against each other by raw
-score does not work---Shapley values sum to the infrastructure share while step
-regrets do not live on that scale, so a single step scored at the whole loss
-outranks two messages that split it---and an earlier version of this method lost
-every overdetermined episode for exactly that reason.
+identity says is responsible. Ranking the two sides against each other by raw score does not work. Shapley
+values sum to the infrastructure share while step regrets do not live on that
+scale, so a single step scored at the whole loss outranks two messages that
+split it. An earlier version of this method lost every overdetermined episode
+for exactly that reason.
 
 \section{Planted causes}
 \label{sec:planted}
@@ -363,8 +361,8 @@ injected set is then the cause by definition.
 
 Four strata, each testing something different. \textbf{Single}
 (\nSingle{} episodes): one fault causes the loss. \textbf{Conjunctive}
-(\nConjunctive): two faults, neither harmful alone, harmful together---each is
-necessary given the other, so repairing either fixes the episode.
+(\nConjunctive): two faults, neither harmful alone, harmful together. Each is necessary given
+the other, so repairing either fixes the episode.
 \textbf{Overdetermined} (\nOverdetermined): two faults, \emph{either} sufficient
 on its own, so repairing one changes nothing and every one-at-a-time score is
 zero. \textbf{Agent} (\nAgentStratum): no faults bite, and the policy loses
@@ -454,9 +452,8 @@ against replay cost. Minimal sufficient sets sit at the top-left corner.}
 \end{figure}
 
 An attribution is worth something if repairing what it names removes the loss.
-Of \$\dollarsAvailable{} of infrastructure-caused loss, repairing what
-agent-only intervention names recovers \agentOnlyRepair\%---it names agent
-steps, and an agent step is not a thing an operator can repair. Single-fault
+Of \$\dollarsAvailable{} of infrastructure-caused loss, repairing what agent-only intervention names recovers \agentOnlyRepair\%. It
+names agent steps, and an agent step is not a thing an operator can repair. Single-fault
 repair recovers \faultSingleRepair\%. Minimal sufficient sets recover
 \minSuffRepair\%.
 
@@ -468,9 +465,8 @@ the right one.
 
 \subsection{How often interactions matter}
 
-Across \nonAdditiveRate\%\ of episodes with infrastructure loss, repairing each
-message on its own does not account for the whole infrastructure share---the
-mean gap is \$\interactionGap. On \overdetRate\%\ every single-repair score is
+Across \nonAdditiveRate\%\ of episodes with infrastructure loss, repairing each message on its own does not account for the whole
+infrastructure share. The mean gap is \$\interactionGap. On \overdetRate\%\ every single-repair score is
 zero while the total is not. Interaction is not a corner case here; it is a
 quarter of the episodes.
 
@@ -520,12 +516,12 @@ Figure~\ref{fig:landscape}), the split says different things about different
 policies. For the rule-based procedure, \ruleInfra\%\ of its loss is the
 environment's doing. For the ReAct loop, \reactInfra\%\ is infrastructure and
 \reactPolicy\%\ is its own. For the finality-gated runtime the infrastructure
-and policy shares are both zero and \gateIrreducible\%\ of its
-\$\gateMeanLoss{} mean loss is irreducible---it loses only what no unprivileged
-policy can avoid, which the benchmark's own results reach by a different route.
+and policy shares are both zero and \gateIrreducible\%\ of its \$\gateMeanLoss{} mean loss is irreducible. It loses only what no
+unprivileged policy can avoid, which the benchmark's own results reach by a
+different route.
 
 The interesting row is the optimistic policy, which ships as soon as the ledger
-shows any activity. Its infrastructure share is \optInfra\%---\emph{negative}.
+shows any activity. Its infrastructure share is \optInfra\%, and it is \emph{negative}.
 Faults help it, on net. A policy that acts on the first sign of payment is
 occasionally saved by a message going missing, because the message it did not
 receive is the one it would have acted on. We would not have predicted the sign
@@ -547,7 +543,7 @@ non-gated policies. Shares are of that archetype's total excess loss.}
 Table~\ref{tab:archetype} breaks the same decomposition down by situation, and
 it lines up with what the benchmark says about itself from the other direction.
 Infrastructure dominates on the archetypes built around a message going missing,
-arriving stale, or posting twice---these are situations in which a competent
+arriving stale, or posting twice. These are situations in which a competent
 policy is defeated by its inputs. The irreducible share concentrates on the
 cases whose outcome lands after the ship-by deadline, where repaired plumbing
 would not help because the fact itself has not happened yet. The practical
