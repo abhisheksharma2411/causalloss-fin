@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use CausalLoss-Fin, please cite it as below."
 title: "CausalLoss-Fin: splitting financial agent loss between decisions and infrastructure faults"
-abstract: "A causal layer over the FinalityBench benchmark that intervenes on both an agent's decisions and on individual infrastructure faults - dropped, delayed, duplicated and reordered messages - and splits a policy's monetary loss exactly three ways into infrastructure, policy and irreducible shares. Includes a decomposition of a realised fault schedule into individually repairable instances, Shapley allocation across messages, minimal sufficient causes, and a planted-ground-truth suite in four strata including the overdetermined case."
+abstract: "A causal layer over the FinalityBench benchmark that intervenes on both an agent's decisions and on individual infrastructure faults - dropped, delayed, duplicated and reordered messages - and splits a policy's monetary loss exactly three ways into an infrastructure effect, a policy differential against the best implementable policy, and a reference-policy residual. Two of the three can be negative, so none is a share; Shapley allocation then divides the infrastructure effect across individual messages, and those are shares. Includes a decomposition of a realised fault schedule into individually repairable instances, Shapley allocation across messages, minimal sufficient causes, and a planted-ground-truth suite in four strata including the overdetermined case."
 type: software
 authors:
   - family-names: Sharma

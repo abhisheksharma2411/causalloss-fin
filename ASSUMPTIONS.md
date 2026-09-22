@@ -22,9 +22,9 @@ Choices made without asking, with the reasoning.
    attribution look *better*, not worse — so the choice does not flatter this
    paper's conclusion.
 
-4. **The best implementable policy defines the irreducible share.** We use the
+4. **The best implementable policy defines the reference-policy residual.** We use the
    benchmark's strongest unprivileged policy. A stronger one would move loss
-   from the irreducible column into the policy column for every subject.
+   from the residual column into the policy column for every subject.
 
 ## The fault decomposition
 

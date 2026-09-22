@@ -55,8 +55,8 @@ loss do not decompose additively, and on 5.6% every single-repair score is zero
 while the total is not. Scoring messages one at a time is wrong there in
 principle, not merely imprecise.
 
-**The infrastructure share can be negative.** A policy that ships on the first
-sign of payment has an infrastructure share of **−6.8%**: faults help it, on
+**The infrastructure effect can be negative.** A policy that ships on the first
+sign of payment has an infrastructure effect of **−6.8%**: faults help it, on
 net, because the message it does not receive is the one it would have acted on.
 A method that can only add blame to the agent cannot represent that at all.
 
@@ -79,9 +79,9 @@ from finalitybench.policies import ReActPolicy
 world = World(case, ReActPolicy, seed=0)
 factual = world.factual()
 
-factual.shares()      # {'infrastructure': .., 'policy': .., 'irreducible': .., 'total': ..}
-factual.check()       # True: the three shares sum to the loss, exactly
-world.shapley()       # {message ident -> cents}, summing to the infrastructure share
+factual.terms()       # {'infrastructure': .., 'policy': .., 'irreducible': .., 'total': ..}
+factual.check()       # True: the three terms sum to the loss, exactly
+world.shapley()       # {message ident -> cents}, summing to the infrastructure effect
 world.repair_effect(world.instances[0])   # loss avoided by un-dropping one message
 ```
 

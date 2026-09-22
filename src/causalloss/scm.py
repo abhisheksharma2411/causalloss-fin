@@ -123,12 +123,26 @@ class Factual:
         return self.reference_value - self.best_clean_value
 
     def check(self) -> bool:
-        """The three shares must sum to the loss. Telescoping, so exactly."""
+        """The three terms must sum to the loss. Telescoping, so exactly."""
         return self.infrastructure + self.policy_gap + self.irreducible == self.loss
 
-    def shares(self) -> dict[str, int]:
+    def terms(self) -> dict[str, int]:
+        """The signed decomposition: infrastructure effect, policy differential,
+        reference-policy residual, and the loss they sum to.
+
+        Not called ``shares`` because two of the three go negative -- the
+        infrastructure effect when faults help a policy on net, the policy
+        differential whenever the subject beats the best implementable policy
+        on a task -- and a share that can be negative is not a share. The word
+        is kept for :meth:`World.shapley`, which divides the infrastructure
+        effect into parts that do sum to it.
+        """
         return {"infrastructure": self.infrastructure, "policy": self.policy_gap,
                 "irreducible": self.irreducible, "total": self.loss}
+
+    def shares(self) -> dict[str, int]:
+        """Deprecated alias for :meth:`terms`, kept for the v1.0.0 API."""
+        return self.terms()
 
 
 class World:

@@ -44,7 +44,7 @@ def main() -> None:
                 factual = world.factual()
                 exact_checks += 1
                 exact_ok += int(factual.check())
-                shares = factual.shares()
+                shares = factual.terms()
                 for key in totals:
                     totals[key] += shares[key]
                 if shares["policy"] < 0:

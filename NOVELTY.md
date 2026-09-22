@@ -56,7 +56,7 @@ removes the loss.
 Petreczky, Kersch and Benczúr (arXiv:2310.09961, Oct 2023) show that the
 *asymmetric* variant produces counter-intuitive attributions outside a
 restricted model class, which is why we use the standard symmetric value. Our
-use is narrow: the infrastructure share comes from an exact identity, and
+use is narrow: the infrastructure effect comes from an exact identity, and
 Shapley only divides it across messages, so the efficiency axiom is a check on
 the implementation rather than a modelling assumption.
 
@@ -77,6 +77,6 @@ required measurement, is *how much* it costs, that repairing the named cause
 recovers none of it, and that a quarter of episodes interact so that
 one-at-a-time repair is wrong in principle rather than merely imprecise.
 
-The negative infrastructure share for the optimistic policy was not predicted
+The negative infrastructure effect for the optimistic policy was not predicted
 and is not offered as a general result. It is reported because it is what the
 data says.

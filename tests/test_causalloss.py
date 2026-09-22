@@ -84,7 +84,7 @@ def test_three_way_split_sums_to_the_loss(corpus):
             for seed in (0, 1):
                 factual = World(case, policy, seed).factual()
                 assert factual.check(), (
-                    f"{case.task_id} {policy.__name__} {factual.shares()}")
+                    f"{case.task_id} {policy.__name__} {factual.terms()}")
 
 
 def test_shapley_sums_to_the_infrastructure_share(corpus):

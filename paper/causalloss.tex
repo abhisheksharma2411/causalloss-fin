@@ -138,8 +138,7 @@ Shapley credit-splitting and ground-truth validation. CausalFlow~\cite{causalflo
 adds counterfactual repair, generating minimally edited traces that flip the
 outcome. REFLECT~\cite{reflect} targets silent failures, where the agent
 completes the task and the result is wrong with no error signal. All three
-intervene on agent steps. None models environment faults, and we verified this
-against each paper rather than inferring it from a summary.
+intervene on agent steps. None models environment faults, which we checked in each paper directly.
 
 Our disagreement with this line is narrow and, we think, friendly. The
 machinery is right. The variable set is incomplete for environments where
@@ -152,9 +151,8 @@ actual causality~\cite{halpern2016}, in which a cause is a but-for cause
 relative to a contingency, and of the associated notion of degree of
 responsibility~\cite{chockler2004}. Overdetermination, two events, either
 sufficient alone, so neither is necessary, is the standard hard case, and it is
-the one our third stratum is built from. We take the practical rather than the philosophical route: a minimal
-sufficient set is the smallest set of messages whose joint repair removes the
-loss. The search stops at \searchCap{} messages, which would make a perfect
+the one our third stratum is built from. We take the practical route: a minimal sufficient set is the smallest set of
+messages whose joint repair removes the loss. The search stops at \searchCap{} messages, which would make a perfect
 recovery figure conditional on the cases small enough to fit inside that
 bound. It does not: over \ciEpisodes{} episodes the largest set found holds
 \largestRepairSet{} messages and the cap binds on \capBound{} of them, so the
@@ -204,8 +202,7 @@ fault-free schedule for the same case and seed: every way the two differ is an
 instance, and repairing all of them returns the fault-free world exactly. There
 are \meanInstances{} instances per episode on average and at most
 \maxInstances. An archetype's defining fault, the settlement the processor
-never hears about, appears as an instance too, flagged as structural, so it can
-be intervened on rather than being baked into the background.
+never hears about, appears as an instance too, flagged as structural, so it can be intervened on instead of being baked into the background.
 
 A first version decomposed per family instead, building each single-family
 schedule and diffing that against the baseline. Pooling those instances and
@@ -302,7 +299,7 @@ numbers as a signed decomposition that sums to the loss, not as a partition into
 non-negative parts. This matters more than it might appear: a residual
 term is precisely where unattributed loss would accumulate, and unattributed
 loss in an agent-analysis tool gets read as the agent's fault. The identity holds on \decompExact{} episodes checked, and the test suite
-asserts it rather than assuming it. Being algebra, it is reported without an
+asserts it. Being algebra, it is reported without an
 interval: a confidence band around an identity would say nothing.
 
 Shapley values then distribute the infrastructure effect across individual
@@ -452,8 +449,8 @@ truth. Agent-only intervention misfiles \agentOnlyMisattr\%\ of infrastructure
 episodes and charges \$\agentOnlyDollars{} of infrastructure-caused loss to the
 agent.
 
-The methods that intervene on faults all reach zero allocation error, and this
-deserves a caveat rather than a victory lap. Once a method can intervene on the
+The methods that intervene on faults all reach zero allocation error, and that
+deserves a caveat. Once a method can intervene on the
 fault process at all, the agent/infrastructure split follows from the identity
 in Section~\ref{sec:split} and is exact by construction. The hard part is
 \emph{which} message, not \emph{which side}. Table~\ref{tab:allocation} shows
