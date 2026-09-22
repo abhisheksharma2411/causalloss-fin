@@ -1,11 +1,12 @@
 {
  "provenance": {
   "version": "1.0.2",
-  "git_commit": "7075cbc12c4bfc48913d144b50f48c9305a2e57f",
-  "git_dirty": "no",
-  "command": "run_all.py",
+  "git_commit": "87f5aad9c8d09b443606bdfb286d025c7e225781",
+  "git_dirty": "yes",
+  "git_dirty_paths": "ASSUMPTIONS.md; experiments/_common.py; scripts/check_provenance.py",
+  "command": "e6_cost.py",
   "python": "3.14.7",
-  "generated_at": "2026-09-22T08:51:08+00:00",
+  "generated_at": "2026-09-22T09:38:04+00:00",
   "finalitybench_version": "1.0.0",
   "finalitybench_location": "sibling checkout",
   "finalitybench_git": "0b01661",
@@ -16,37 +17,37 @@
   {
    "method": "last_action",
    "replays_per_episode": 1.0,
-   "ms_per_episode": 0.17361188339843162
+   "ms_per_episode": 0.17566531670733335
   },
   {
    "method": "first_divergence",
    "replays_per_episode": 1.0,
-   "ms_per_episode": 0.16989434995290745
+   "ms_per_episode": 0.1734367999991567
   },
   {
    "method": "minimal_sufficient",
    "replays_per_episode": 2.3,
-   "ms_per_episode": 0.37871531670437736
+   "ms_per_episode": 0.40085625002272235
   },
   {
    "method": "fault_single",
    "replays_per_episode": 8.433333333333334,
-   "ms_per_episode": 1.380945149943121
+   "ms_per_episode": 1.4126465500794438
   },
   {
    "method": "agent_only",
    "replays_per_episode": 70.53333333333333,
-   "ms_per_episode": 7.392008233364322
+   "ms_per_episode": 7.520959700013918
   },
   {
    "method": "joint_greedy",
    "replays_per_episode": 77.96666666666667,
-   "ms_per_episode": 8.701169399986005
+   "ms_per_episode": 8.77216591669215
   },
   {
    "method": "joint_shapley",
    "replays_per_episode": 280.15,
-   "ms_per_episode": 41.40114793337185
+   "ms_per_episode": 42.20481946664828
   }
  ]
 }

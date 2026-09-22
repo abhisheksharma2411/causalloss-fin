@@ -1,4 +1,4 @@
-# CausalLoss-Fin v1.0.2
+# CausalLoss-Fin v1.0.3
 
 A causal layer over FinalityBench that answers "was this the agent's fault or
 the system's?" — exactly, and cheaply.
@@ -27,7 +27,27 @@ no variable for the environment, so no infrastructure cause is expressible in
 its output. That part is a proposition about the method and needs no corpus.
 What the corpus measures is the size of the consequence.
 
-## What changed since v1.0.1
+## What changed since v1.0.2
+
+**A fresh clone could not bootstrap itself.** `_p1.py` called `ensure_p1()` at
+module scope, so `make p1` -- the target whose job is to fetch FinalityBench --
+could not import the module holding `clone_p1`, and its fallback failed the
+same way. A checkout with no sibling checkout and no `vendor/` died before any
+experiment ran. The call is gone from module scope; every module that needs P1
+already calls it. Verified by cloning into an isolated directory with no
+sibling: it now clones P1 into `vendor/` and completes.
+
+**A dirty tree now says what was dirty.** Results recorded `git_dirty: yes`
+without naming the paths, so the cause had to be guessed from the build system.
+Two readers in a row guessed `distclean`, which is filtered and was not it --
+the actual cause both times was a file edited while the run was in flight.
+Provenance now records `git_dirty_paths` and the checker prints it.
+
+**Titles aligned** across the paper and `CITATION.cff`, and the paper no longer
+says the word "share" is retained for the Shapley output: those allocations are
+signed, so they are signed allocations throughout.
+
+## What changed in v1.0.2
 
 Two external review passes. The substantive corrections:
 

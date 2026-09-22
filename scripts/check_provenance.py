@@ -131,7 +131,15 @@ def main(argv: list[str]) -> int:
             problems.append(f"{f.name}: unversioned")
             continue
         if dirty != "no":
-            problems.append(f"{f.name}: produced from a dirty tree ({commit[:12]})")
+            # Name the paths when the file recorded them. Without this a
+            # reader sees only that something was uncommitted and has to infer
+            # what from the build system.
+            paths = ""
+            prov = payload.get("provenance", payload)
+            if isinstance(prov, dict) and prov.get("git_dirty_paths"):
+                paths = f" -- uncommitted: {prov['git_dirty_paths']}"
+            problems.append(
+                f"{f.name}: produced from a dirty tree ({commit[:12]}){paths}")
         commits.setdefault(commit, []).append(f.name)
 
     if len(commits) > 1:

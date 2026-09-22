@@ -47,6 +47,12 @@ def git_revision() -> dict[str, str]:
     ``unversioned``, because the experiments ran before the repository had a
     first commit. A reader could not map a result to a revision, which is the
     only reason to record one.
+
+    When the tree is dirty the offending paths are recorded too. A bare
+    ``"git_dirty": "yes"`` tells a reader that something was uncommitted but
+    not what, so the cause has to be guessed from the build system -- and two
+    reviewers in a row guessed ``distclean``, which is filtered and was not it.
+    Naming the paths turns that into a fact the file already contains.
     """
     info = {"commit": "uncommitted", "dirty": "unknown"}
     try:
@@ -54,7 +60,10 @@ def git_revision() -> dict[str, str]:
                               capture_output=True, text=True, timeout=5)
         if head.returncode == 0 and head.stdout.strip():
             info["commit"] = head.stdout.strip()
-        info["dirty"] = "yes" if _dirty_inputs(ROOT) else "no"
+        dirty = _dirty_inputs(ROOT)
+        info["dirty"] = "yes" if dirty else "no"
+        if dirty:
+            info["dirty_paths"] = dirty
     except Exception:
         pass
     return info
@@ -66,6 +75,10 @@ def provenance(**extra: Any) -> dict[str, Any]:
     revision = git_revision()
     return {"version": __version__,
             "git_commit": revision["commit"], "git_dirty": revision["dirty"],
+            # Only present when the tree was dirty, and then it says what was
+            # uncommitted so nobody has to infer it from the build system.
+            **({"git_dirty_paths": revision["dirty_paths"]}
+               if revision.get("dirty_paths") else {}),
             "command": " ".join(sys.argv),
             "python": platform.python_version(),
             "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
