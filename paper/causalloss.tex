@@ -103,9 +103,9 @@ individual infrastructure faults in the same causal model, on the same episode,
 with exact common random numbers (Section~\ref{sec:scm}).
 
 \item \textbf{An exact three-way split.} A telescoping identity decomposes any
-policy's loss into infrastructure, policy and reference-policy residuals with no
-residual term. It holds on \decompExact{} episodes checked
-(Section~\ref{sec:split}).
+policy's loss into an infrastructure effect, a policy differential and a
+reference-policy residual, with nothing left unattributed. It holds on
+\decompExact{} episodes checked (Section~\ref{sec:split}).
 
 \item \textbf{A decomposition of the fault process into repairable units},
 together with the finding that FinalityBench's fault families compose instead of superposing, so per-family
@@ -513,8 +513,8 @@ settlement, escalates, and the merchant ends \$\exLoss{} behind the
 reference.
 
 The three-way split assigns the whole \$\exLoss{} to infrastructure: in a
-repaired world this policy solves the task exactly, so its policy and
-reference-policy residuals are zero. Shapley then divides that \$\exLoss{} between two
+repaired world this policy solves the task exactly, so its policy differential
+and reference-policy residual are both zero. Shapley then divides that \$\exLoss{} between two
 messages at \$\exShare{} each, the dropped settlement to the processor, and a
 reordering at the bank feed, and gives zero to the other \exZeroed{}. Neither of the two is sufficient alone:
 with either one repaired the policy recovers, which is why they split the
@@ -548,8 +548,9 @@ Applied without planting (Table~\ref{tab:landscape},
 Figure~\ref{fig:landscape}), the split says different things about different
 policies. For the rule-based procedure, \ruleInfra\%\ of its loss is the
 environment's doing. For the ReAct loop, \reactInfra\%\ is infrastructure and
-\reactPolicy\%\ is its own. For the finality-gated runtime the infrastructure
-and policy differentials are both zero and \gateIrreducible\%\ of its \$\gateMeanLoss{} mean loss is irreducible. It loses only what no
+\reactPolicy\%\ is its own. For the finality-gated runtime the infrastructure effect and the policy
+differential are both zero, and \gateIrreducible\%\ of its \$\gateMeanLoss{}
+mean loss is the reference-policy residual. It loses only what no
 unprivileged policy can avoid, which the benchmark's own results reach by a
 different route.
 
@@ -641,9 +642,10 @@ operator would recognise, not the whole action space. A better alternative
 outside the menu would raise the measured effect of a step, which would make
 agent-only attribution look better, not worse.
 
-\textbf{The reference policy defines the reference-policy residual.} We use the
-benchmark's strongest implementable policy. A stronger one would move loss from
-the irreducible column into the policy column for everyone.
+\textbf{Which policy counts as the reference is a choice.} We use the
+benchmark's strongest implementable policy, and that choice fixes the
+residual: a stronger reference would move loss out of the residual and into
+the policy differential for every subject.
 
 \section{Conclusion}
 

@@ -15,6 +15,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLACEHOLDER = "ZENODO_DOI_PLACEHOLDER"
+#: The paper ships saying the DOI is coming rather than showing a placeholder,
+#: because a literal ZENODO_DOI_PLACEHOLDER in a posted preprint is worse than
+#: an honest sentence. This is the sentence to replace once the DOI exists.
+FORTHCOMING = "An archival DOI is forthcoming."
 
 
 def main(doi: str) -> int:
@@ -24,7 +28,12 @@ def main(doi: str) -> int:
 
     tex = ROOT / "paper" / "causalloss.tex"
     body = tex.read_text()
-    if PLACEHOLDER in body:
+    if FORTHCOMING in body:
+        escaped = doi.replace("_", r"\_")
+        tex.write_text(body.replace(
+            FORTHCOMING, f"It is archived at DOI \\texttt{{{escaped}}}."))
+        print(f"  paper/causalloss.tex <- {doi}")
+    elif PLACEHOLDER in body:
         tex.write_text(body.replace(PLACEHOLDER, doi.replace("_", r"\_")))
         print(f"  paper/causalloss.tex <- {doi}")
     elif doi in body:
