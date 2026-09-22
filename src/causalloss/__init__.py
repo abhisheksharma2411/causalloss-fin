@@ -9,4 +9,4 @@ and splits responsibility in money.
 
 from ._p1 import ensure_p1, p1_provenance  # noqa: F401
 
-__version__ = "1.0.0"
+__version__ = "1.0.2"

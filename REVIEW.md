@@ -78,7 +78,7 @@ baseline.
 decomposition is reusable by anyone doing counterfactual work on this benchmark.
 
 **Submit the paper: yes, with the scope it states.** cs.AI primary, cross-list
-cs.SE and cs.LG.
+cs.SE. Not cs.LG: nothing here trains or evaluates a learning method.
 
 **The honest caveat.** A reviewer who reads "agent failures" and expects a
 language model will hold the deterministic policies against it. The right next

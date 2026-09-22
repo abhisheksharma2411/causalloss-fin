@@ -188,13 +188,18 @@ def macros(e1, e2, e3, e4, e5, e6, e7=None, e8=None, e9=None):
             "exArchetype": ep["archetype"].replace("_", r"\_"),
         })
     if e9:
+        level = f"{100 * (1 - e9['config']['alpha']):.0f}"
+
         def band(v):
-            return (f"{100 * v['point']:.1f}\\% "
-                    f"[{100 * v['low']:.1f}, {100 * v['high']:.1f}]")
+            # A bracketed range with no label is not a reportable interval.
+            return (f"{100 * v['point']:.1f}\\% ({level}\\% CI: "
+                    f"{100 * v['low']:.1f}--{100 * v['high']:.1f}\\%)")
         defs.update({
             "nonAdditiveCI": band(e9["non_additive_rate"]),
             "overdetCI": band(e9["overdetermined_rate"]),
             "ciTasks": e9["non_additive_rate"]["groups"],
+            "ciReplicates": f"{e9['config']['replicates']:,}",
+            "ciLevel": f"{100 * (1 - e9['config']['alpha']):.0f}",
             "ciEpisodes": e9["non_additive_rate"]["observations"],
             "searchCap": e9["search_cap"]["cap"],
             "largestRepairSet": e9["search_cap"]["largest_repair_set_found"],

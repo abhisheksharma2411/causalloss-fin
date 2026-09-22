@@ -46,5 +46,4 @@ make arxiv    # paper/causalloss-arxiv.tar.gz, verified standalone
 - **Abstract:** `paper/arxiv_abstract.txt` (under the 1,920 limit, macros resolved).
 - **Compiler:** pdfLaTeX. No BibTeX needed.
 
-Submit after FinalityBench, and cite its arXiv ID in place of the bare GitHub
-URL once it exists.
+FinalityBench is posted as arXiv:2609.04706 and the bibliography cites it.

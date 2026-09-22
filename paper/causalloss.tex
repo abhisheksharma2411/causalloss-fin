@@ -7,12 +7,13 @@
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 \usepackage{microtype}
+\usepackage{balance}
 \input{numbers}
 
 \begin{document}
 
-\title{CausalLoss-Fin: Joint Attribution of Financial-Agent Loss\\
-to Decisions and Infrastructure Faults}
+\title{CausalLoss-Fin: Attributing Financial-Agent Loss to
+Decisions and Infrastructure Faults}
 
 \author{\IEEEauthorblockN{Abhishek Sharma, \textit{Senior Member, IEEE}}
 \IEEEauthorblockA{\texttt{abhicse24@gmail.com} \quad ORCID: 0009-0007-1103-2103}}
@@ -189,8 +190,8 @@ al.~\cite{shapleyrca} show that the \emph{asymmetric} variant, which relaxes the
 symmetry axiom to encode a causal ordering, produces counter-intuitive
 attributions outside a restricted model class. We use the standard symmetric
 value, and for one specific job: dividing the infrastructure effect across
-individual messages in a way that survives interaction. The share itself is not estimated by Shapley, it comes from the
-exact identity, so the efficiency axiom is a check on the implementation
+individual messages in a way that survives interaction. The infrastructure effect itself is not estimated by Shapley; it comes from
+the exact identity, so the efficiency axiom is a check on the implementation
 rather than a modelling assumption.
 
 \textbf{The environment.} FinalityBench~\cite{finalitybench} supplies the
@@ -326,9 +327,13 @@ loss in an agent-analysis tool gets read as the agent's fault. The identity hold
 asserts it. Being algebra, it is reported without an
 interval: a confidence band around an identity would say nothing.
 
-Shapley values then distribute the infrastructure effect across individual
-messages, and those are shares: non-negative in the additive case and summing
-to the effect, with coalition value $v(S) = L(\pi, w_0) - L(\pi, S)$. Exact below
+Shapley values then allocate the infrastructure effect across individual
+messages, with coalition value $v(S) = L(\pi, w_0) - L(\pi, S)$. They satisfy
+efficiency, so the allocations sum to the effect, and they are \emph{signed}:
+a message whose repair would have increased the loss carries a negative
+marginal contribution and therefore a negative allocation. Additivity of the
+value function does not make them non-negative, and on this corpus the
+infrastructure effect itself goes negative for one policy. Exact below
 thirteen instances, permutation-sampled above; the sampled estimate sits within
 \shapleyError\%\ of the exact one in $L_1$.
 
@@ -498,10 +503,8 @@ distinguishes the methods that have it.
 
 \begin{table*}[t]
 \centering
-\caption{Repairing what each method named, and what it cost to compute. Cost
-is counted in episode replays, which is a property of the method and
-reproduces exactly; wall-clock time is a property of the machine and is not
-reported.}
+\caption{Repairing what each method named, and what it cost in episode
+replays.}
 \label{tab:repair}
 \footnotesize\setlength{\tabcolsep}{3pt}
 \input{tables/repair}
@@ -521,8 +524,11 @@ names agent steps, and an agent step is not a thing an operator can repair. Sing
 repair recovers \faultSingleRepair\%. Minimal sufficient sets recover
 \minSuffRepair\%.
 
-Cost separates the two methods that are exact. Minimal sufficient sets need
-\minSuffReplays{} replays per episode; joint Shapley needs \shapleyReplays.
+Cost is counted in replays rather than seconds. A replay count is a property
+of the method and reproduces exactly; wall-clock time is a property of the
+machine, and ours moved threefold between runs that changed no code. Minimal
+sufficient sets need \minSuffReplays{} replays per episode; joint Shapley
+needs \shapleyReplays.
 Shapley buys the full allocation across messages, which a minimal set does not
 provide; when the question is only ``what do we fix'', the cheap method is also
 the right one.
@@ -532,10 +538,10 @@ the right one.
 Across \nonAdditiveCI{} of episodes with infrastructure loss, repairing each
 message on its own does not account for the whole infrastructure effect. The
 mean gap is \$\interactionGap. On \overdetCI{} every single-repair score is
-zero while the total is not. Intervals are percentile bootstraps over
-\ciTasks{} tasks covering \ciEpisodes{} episodes, resampling tasks rather than
-episodes because episodes from one task share its amount, archetype and fault
-draw. The algebraic identity needs no such interval and is not given one;
+zero while the total is not. We report 95\% percentile intervals from \ciReplicates{} task-clustered
+bootstrap replicates over \ciTasks{} tasks covering \ciEpisodes{} episodes,
+resampling tasks rather than episodes because episodes from one task share its
+amount, archetype and fault draw. The algebraic identity needs no such interval and is not given one;
 these are estimates of how often a phenomenon occurs in a generated
 population, which is a different kind of claim.
 
@@ -556,9 +562,9 @@ The three-way split assigns the whole \$\exLoss{} to infrastructure: in a
 repaired world this policy solves the task exactly, so its policy differential
 and reference-policy residual are both zero. Shapley then divides that \$\exLoss{} between two
 messages at \$\exShare{} each, the dropped settlement to the processor, and a
-reordering at the bank feed, and gives zero to the other \exZeroed{}. Neither of the two is sufficient alone:
-with either one repaired the policy recovers, which is why they split the
-credit evenly rather than one taking all of it.
+reordering at the bank feed, and gives zero to the other \exZeroed{}. Neither fault is sufficient by itself to create the loss; repairing either one
+alone is sufficient to remove it. That is why they split the credit evenly
+instead of one taking all of it.
 
 Agent-only intervention, run on the same episode, reports that the agent should
 have shipped at step~0 and assigns \$\exAgentOnly{} to that decision. The recommendation
@@ -600,25 +606,25 @@ Faults help it, on net. A policy that acts on the first sign of payment is
 occasionally saved by a message going missing, because the message it did not
 receive is the one it would have acted on. We would not have predicted the sign
 and do not present it as a general result; it is a reminder that ``the
-infrastructure was at fault`` is a claim with a direction, and that a method
+infrastructure was at fault'' is a claim with a direction, and that a method
 which can only add blame to the agent cannot represent it at all.
 
 \subsection{Which situations are the environment's fault}
 
 \begin{table}[t]
 \centering
-\caption{Where responsibility sits, by archetype, pooled over the three
-non-gated policies. Values are the three signed decomposition terms as
-percentages of that archetype's total excess loss. They are not shares: a term
-can be negative, and can exceed 100\%, when one of the others runs the other
-way.}
+\caption{Where responsibility sits, by archetype, pooled over the three non-
+gated policies.}
 \label{tab:archetype}
 \footnotesize\setlength{\tabcolsep}{3pt}
 \input{tables/archetype}
 \end{table}
 
-Table~\ref{tab:archetype} breaks the same decomposition down by situation, and
-it lines up with what the benchmark says about itself from the other direction.
+Table~\ref{tab:archetype} breaks the same decomposition down by situation. Its
+values are the three signed terms as percentages of each archetype's total
+excess loss, so a term can be negative and can exceed 100\% when another runs
+the other way; they are not shares. It lines up with what the benchmark says
+about itself from the other direction.
 Infrastructure dominates on the archetypes built around a message going missing,
 arriving stale, or posting twice. These are situations in which a competent
 policy is defeated by its inputs. The reference-policy residual concentrates on the
@@ -653,9 +659,13 @@ deterministic. For a stochastic agent the two come apart, and the published
 methods we compare against are built for that case; how the comparison moves
 there is an open question we cannot settle from inside this environment.
 
-\textbf{Cheap methods can be exact.} The best accuracy-per-replay in Table~\ref{tab:repair} belongs to minimal
-sufficient sets, at \minSuffReplays{} replays, and the \searchCap-message cap
-never bound on any episode searched. The expensive method is worth its cost only when the
+\textbf{Cheap methods can be exact.} Minimal sufficient repair is the cheapest
+method in Table~\ref{tab:repair} that is exact on every planted stratum, at
+\minSuffReplays{} replays, and the \searchCap-message cap never bound on any
+episode searched. It does not win on accuracy per replay taken as a ratio:
+first divergence answers with one replay and is right about the side often
+enough to beat it on that measure, while being wrong about which message
+whenever it matters. The expensive method is worth its cost only when the
 full per-message allocation is the deliverable.
 
 \section{Limitations}
@@ -706,7 +716,8 @@ and the cost of omitting them is measurable rather than theoretical. And when
 the goal is operational remediation rather than complete allocation, use
 minimal sufficient repair: it recovers \minSuffRepair\%\ of the available loss
 at \minSuffReplays{} replays per episode, against \shapleyReplays{} for the
-full per-message allocation, which buys precision nobody acts on.
+full per-message allocation, which may be unnecessary when the operational
+goal is only to identify a sufficient repair.
 
 \section*{Artifact availability}
 
@@ -716,6 +727,7 @@ FinalityBench artifact~\cite{finalitybench} rather than reimplementing it, and
 each result file records the revision it ran against. \texttt{make reproduce}
 runs the suite end to end from a clean tree.
 
+\balance
 \begin{thebibliography}{99}
 
 \bibitem{car}
