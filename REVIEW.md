@@ -66,8 +66,11 @@ interventions coincide only under determinism.
 
 Flagship items delivered: interaction allocations (Shapley), compound faults
 (conjunctive and overdetermined strata), repair validation (E4), and a reusable
-library. Not delivered: uncertainty intervals (unnecessary — replay is exact),
-thousands of traces beyond the corpus, and any LLM baseline.
+library. Uncertainty intervals were delivered later, in E9: prevalence claims are
+estimates over a generated population and carry task-clustered bootstrap
+intervals, while the telescoping identity is algebra and is reported without
+one. Still not delivered: thousands of traces beyond the corpus, and any LLM
+baseline.
 
 ## Readiness
 

@@ -7,12 +7,13 @@
 #   make tables       regenerate LaTeX tables and macros from results/
 #   make paper        build paper/causalloss.pdf
 #   make arxiv        build and verify a self-contained arXiv submission
-#   make reproduce    all of the above, from a clean tree
+#   make verify       provenance and prose-number gates over the built paper
+#   make reproduce    all of the above, from a clean tree, ending in verify
 
 PY  := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup p1 test experiments figures tables paper arxiv reproduce clean distclean
+.PHONY: setup p1 test experiments figures tables paper arxiv verify reproduce clean distclean
 
 setup: $(PY) p1
 
@@ -51,9 +52,13 @@ paper: tables figures
 arxiv: paper
 	$(PY) paper/make_arxiv.py
 
-reproduce: distclean setup test experiments figures tables paper
+verify: ## the gates a finished paper has to pass
+	$(PY) scripts/check_provenance.py
+	$(PY) scripts/check_prose_numbers.py
+
+reproduce: distclean setup test experiments figures tables paper verify
 	@echo
-	@echo "reproduce complete -- paper/causalloss.pdf"
+	@echo "reproduce complete -- paper/causalloss.pdf, gates passed"
 
 clean:
 	rm -rf paper/*.aux paper/*.log paper/*.out paper/*.fls paper/*.fdb_latexmk \

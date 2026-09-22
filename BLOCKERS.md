@@ -32,13 +32,11 @@ because our agent-step intervention substitutes an action where the published
 methods resample one, and those coincide only under determinism. This is stated
 in the limitations rather than being left for a reader to notice.
 
-## 2. Zenodo deposit — deferred
+## 2. Zenodo deposit — resolved 2026-09-22
 
-No Zenodo token was configured. The DOI placeholder in the paper's Artifact
-Availability section is filled by `scripts/insert_doi.py` once a deposit
-exists. Note that the GitHub–Zenodo webhook path failed to list a
-newly-created repository on this account even after an explicit sync, so a
-manual deposit is the reliable route; `PUBLISH.md` documents both.
+Concept DOI **10.5281/zenodo.22893020**. The webhook path did work; it had
+simply never been enabled for this repository, so the v1.0.0 release fired
+nothing. See `PUBLISH.md` for the order that works.
 
 ## Not blockers
 

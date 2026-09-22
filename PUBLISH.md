@@ -9,32 +9,28 @@ gh repo create abhisheksharma2411/causalloss-fin --public \
 git remote add origin https://github.com/abhisheksharma2411/causalloss-fin.git
 CRED='!f() { echo username=x-access-token; echo "password=$GH_TOKEN"; }; f'
 git -c credential.helper="$CRED" push -u origin HEAD:main
-git -c credential.helper="$CRED" push origin v1.0.0
-gh release create v1.0.0 --title "CausalLoss-Fin v1.0.0" --notes-file RELEASE_NOTES.md
+git -c credential.helper="$CRED" push origin v1.0.1
+gh release create v1.0.1 --title "CausalLoss-Fin v1.0.1" --notes-file RELEASE_NOTES.md
 ```
 
 Keep the token in the environment; do not let it reach `.git/config`.
 
-## 2. Zenodo
+## 2. Zenodo — done
 
-The GitHub–Zenodo webhook did **not** list a newly created repository on this
-account even after an explicit "Sync now", so prefer the manual deposit:
+Concept DOI **10.5281/zenodo.22893020** (v1.0.1 = 22893021), minted
+2026-09-22 and written into the paper and `CITATION.cff` by
+`scripts/insert_doi.py`.
 
-```bash
-git archive --format=zip --prefix=causalloss-fin-1.0.0/ v1.0.0 \
-  -o ~/Downloads/causalloss-fin-v1.0.0.zip
-```
+It took two attempts to understand why. Zenodo archives only **public** repos,
+and only on a GitHub *release* that fires its webhook. The v1.0.0 release
+predated the webhook, so it minted nothing and the repository sat without a DOI
+for three weeks. The order that works is: repo public, toggle it on at
+<https://zenodo.org/account/settings/github/> (this installs the webhook),
+cut a release, then run `scripts/insert_doi.py <doi>`. Check the webhook exists
+with `GET /repos/<owner>/<repo>/hooks` before assuming the toggle is enough.
 
-Upload at <https://zenodo.org/uploads/new> as **Software**, with the metadata in
-`CITATION.cff`, and add a related identifier: *is supplement to* the GitHub URL.
-Also add *is derived from* the FinalityBench DOI once that exists.
-
-Then:
-
-```bash
-.venv/bin/python scripts/insert_doi.py 10.5281/zenodo.NNNNNNNN
-make paper
-```
+Cite the **concept** DOI: it resolves to the latest version, which is what
+FinalityBench and HoldSpec do.
 
 ## 3. arXiv
 
@@ -42,7 +38,11 @@ make paper
 make arxiv    # paper/causalloss-arxiv.tar.gz, verified standalone
 ```
 
-- **Primary:** `cs.AI`. Cross-list `cs.SE`, `cs.LG`.
+- **Primary:** `cs.AI`. Cross-list `cs.SE`.
+- Not `cs.LG`: nothing here trains or evaluates a learning method. The
+  policies are deterministic procedures and the analysis is causal
+  decomposition, so the category would misdirect readers looking for a
+  learning contribution.
 - **Abstract:** `paper/arxiv_abstract.txt` (under the 1,920 limit, macros resolved).
 - **Compiler:** pdfLaTeX. No BibTeX needed.
 
