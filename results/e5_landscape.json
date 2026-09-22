@@ -1,11 +1,11 @@
 {
  "provenance": {
   "version": "1.0.2",
-  "git_commit": "ded5dad46267d4e6dc0942a8ab90ae189ecf4266",
-  "git_dirty": "yes",
+  "git_commit": "7075cbc12c4bfc48913d144b50f48c9305a2e57f",
+  "git_dirty": "no",
   "command": "run_all.py",
   "python": "3.14.7",
-  "generated_at": "2026-09-22T08:41:18+00:00",
+  "generated_at": "2026-09-22T08:51:04+00:00",
   "finalitybench_version": "1.0.0",
   "finalitybench_location": "sibling checkout",
   "finalitybench_git": "0b01661",
