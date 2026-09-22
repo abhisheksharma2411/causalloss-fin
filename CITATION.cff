@@ -9,8 +9,8 @@ authors:
     email: abhicse24@gmail.com
     orcid: "https://orcid.org/0009-0007-1103-2103"
     affiliation: "IEEE Senior Member"
-version: 1.0.0
-date-released: 2026-09-02
+version: 1.0.1
+date-released: 2026-09-22
 license: MIT
 repository-code: "https://github.com/abhisheksharma2411/causalloss-fin"
 url: "https://abhisheksharma2411.github.io"
