@@ -104,6 +104,11 @@ def abstract_text() -> str:
     body = re.sub(r"\\texttt\{([^}]*)\}", r"\1", body)
     body = re.sub(r"\\textsuperscript\{([^}]*)\}", r"^\1", body)
     body = body.replace("\\%", "%").replace("\\$", "$").replace("\\&", "&")
+    # ``\%\ `` in the source leaves a bare ``\ `` behind once the percent is
+    # unescaped, so the pasted abstract read "100%\ of". Drop TeX's explicit
+    # inter-word space and its tie, which the submission form renders
+    # literally.
+    body = body.replace("\\ ", " ").replace("~", " ")
     body = body.replace("---", "--").replace("``", '"').replace("''", '"')
     body = re.sub(r"\s+", " ", body).strip()
     return body

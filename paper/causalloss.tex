@@ -11,21 +11,21 @@
 
 \begin{document}
 
-\title{CausalLoss-Fin: Splitting the Bill Between a Financial\\Agent and the Infrastructure It Ran On}
+\title{CausalLoss-Fin: Joint Attribution of Financial-Agent Loss\\
+to Decisions and Infrastructure Faults}
 
-\author{\IEEEauthorblockN{Abhishek Sharma}
-\IEEEauthorblockA{Senior Member, IEEE\\
-\texttt{abhicse24@gmail.com} \quad ORCID: 0009-0007-1103-2103}}
+\author{\IEEEauthorblockN{Abhishek Sharma, \textit{Senior Member, IEEE}}
+\IEEEauthorblockA{\texttt{abhicse24@gmail.com} \quad ORCID: 0009-0007-1103-2103}}
 
 \maketitle
 
 \begin{abstract}
-When an agent handling a payment exception loses money, published
-counterfactual attribution will tell you which of its steps to blame. It will
-tell you that even when the answer is that a settlement message was dropped and
-the agent never had a chance. Methods in this line intervene on the agent's own
-steps, and their causal models contain no variable for the environment, so
-every dollar they explain is charged to a decision.
+When an agent handling a payment exception loses money, the agent-step
+attribution methods this paper compares against will name one of its actions.
+They will do so even when a settlement message was dropped and the agent never
+had a chance: they intervene on agent actions and do not expose infrastructure
+faults as intervenable variables, so every dollar they explain is charged to a
+decision.
 
 We take a benchmark whose fault process is explicit and replayable, decompose
 each episode's realised delivery schedule into named, individually repairable
@@ -33,24 +33,23 @@ messages, and intervene on \emph{both} the agent's choices and the
 infrastructure's. A telescoping identity splits any policy's loss exactly three
 ways: an infrastructure effect, a policy differential against the best
 implementable policy, and a reference-policy residual. Two of the three can be
-negative, so none is a share; Shapley values then distribute the first across
-individual messages, and those are shares.
+negative, so none is a share; Shapley values then allocate the first across
+individual messages.
 
-One result is structural and needs no corpus: agent-only intervention
-identifies no infrastructure cause, because its model contains no variable that
-could name one. What \nPlanted{} planted episodes across \nPolicies{} policies
-measure is the size of that consequence. It misfiles \agentOnlyMisattr\%\ of
+One result is structural and needs no corpus: an agent-only baseline identifies
+no infrastructure cause, because its model contains no variable that could name
+one. What \nPlanted{} planted episodes across \nPolicies{} policies measure is
+the size of that consequence. It misfiles \agentOnlyMisattr\%\ of
 infrastructure episodes and charges \$\agentOnlyDollars{} to the agent.
 Repairing what it names recovers \agentOnlyRepair\%\ of the available loss;
-repairing a minimal sufficient set recovers \minSuffRepair\%\ at
-\minSuffReplays{} replays per episode. Scoring messages one at a time is not
-merely imprecise: \nonAdditiveCI{} of episodes do not decompose additively,
-over \ciTasks{} tasks.
+repairing a minimal sufficient set recovers \minSuffRepair\%. Scoring messages
+one at a time is not merely imprecise: \nonAdditiveCI{} of episodes do not
+decompose additively.
 
-Applied without planting, the split says something uncomfortable. For one
-policy the infrastructure effect is \emph{negative}, because faults that hide
-information sometimes stop it from acting on it. The prevalence figures are
-properties of this generator, not field rates.
+We evaluate deterministic programmatic policies rather than language-model
+agents, which is what makes replay exact and which limits external validity to
+stochastic agents. The prevalence figures are properties of this generator, not
+field rates.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -79,10 +78,11 @@ evidence. These are careful methods and a clear advance on judging traces with
 a language model, which is correlational and, on one published benchmark,
 around 14\% accurate at the step level~\cite{car}.
 
-They also share an assumption. Each intervenes on the agent's steps and on
-nothing else. In an environment where the infrastructure is itself a causal
-agent, messages delayed, duplicated, dropped, reordered, a causal model with
-no infrastructure variable cannot name an infrastructure cause. Asked to
+They also share an assumption. Each intervenes on the agent's steps and
+exposes no infrastructure fault as an intervenable variable. In an environment
+where the infrastructure is itself a causal source --- messages delayed,
+duplicated, dropped, reordered --- a causal model with no infrastructure
+variable cannot name an infrastructure cause. Asked to
 explain the episode above, the best it can do is nominate the step that acted
 on information the agent never received. That is not a defect of execution. It
 is a property of the model, and it is the kind of thing that is easy to miss
@@ -92,7 +92,7 @@ This paper makes it checkable. We build on FinalityBench~\cite{finalitybench},
 an executable benchmark in which four financial systems (payment processor, double-entry ledger, ERP,
 bank feed) are fed independently faulted delivery streams derived from a hidden canonical event log, and agents are graded on
 executed monetary effect. Its fault process is explicit, seeded and replayable,
-which is what makes the counterfactual "what if that message had arrived"
+which is what makes the counterfactual ``what if that message had arrived''
 executable rather than hypothetical.
 
 Our contributions:
@@ -137,13 +137,37 @@ text, reports distributional outcomes with confidence intervals, and includes
 Shapley credit-splitting and ground-truth validation. CausalFlow~\cite{causalflow}
 adds counterfactual repair, generating minimally edited traces that flip the
 outcome. REFLECT~\cite{reflect} targets silent failures, where the agent
-completes the task and the result is wrong with no error signal. All three
-intervene on agent steps. None models environment faults, which we checked in each paper directly.
+completes the task and the result is wrong with no error signal. All three intervene on agent steps and expose no infrastructure fault as an
+intervenable variable, which we checked in each paper directly. Our
+disagreement with this line is narrow. The machinery is right; the variable
+set is incomplete for environments where infrastructure causes loss, and
+Section~\ref{sec:results} quantifies what that incompleteness costs.
 
-Our disagreement with this line is narrow and, we think, friendly. The
-machinery is right. The variable set is incomplete for environments where
-infrastructure causes loss, and Section~\ref{sec:results} quantifies what that
-incompleteness costs.
+\textbf{Attribution that does intervene on the environment.} It would be wrong
+to say that no prior work perturbs anything but the agent. AgenticRAG-
+FP~\cite{agenticragfp} injects certified faults at specified retrieval hops of
+a multi-hop RAG pipeline, corrupting answer-bearing and bridge facts while
+leaving documents topically intact, and re-executes the downstream trajectory
+to ask whether a post-hoc trace still identifies the injected hop. That is an
+environment intervention and it is the closest prior work to ours in that
+respect. What it measures is diagnostic accuracy --- was the injected hop
+recovered --- rather than how much of a realised cost each fault accounts for,
+and it has no counterpart to the signed decomposition below.
+Causely~\cite{causely} goes the other way, giving agents a structured causal
+representation of environment topology and dependencies so that they diagnose
+incidents better; the causal structure is an input to the agent rather than an
+instrument for apportioning loss after the fact.
+
+\textbf{Attribution beyond a single cause.} DCFA~\cite{dcfa} attributes
+failure in multi-agent systems by combining a dependency graph over traces
+with counterfactual refinement, and reports step-level accuracy; its
+interventions are over agent interactions. MP-Bench~\cite{mpbench} argues that
+a multi-agent failure often admits several plausible attributions and that
+treating one as uniquely correct is an artifact of benchmark design. Our
+overdetermined stratum is the same phenomenon in a setting where the competing
+explanations are messages rather than agents, and the signed decomposition is
+one answer to it: when two faults are each sufficient, Shapley splits the
+credit evenly instead of forcing a choice between them.
 
 \textbf{Actual causation.} The question of which of several events counts as
 the cause of an outcome is the subject of the structural-model account of
@@ -195,8 +219,8 @@ nothing else, and no averaging over noise is required to see the effect.
 \section{Fault instances}
 \label{sec:faults}
 
-Attribution needs a cause one can point at. "Delay was enabled" is a knob;
-"the settlement message to the processor never arrived" is a cause. We
+Attribution needs a cause one can point at. ``Delay was enabled'' is a knob;
+``the settlement message to the processor never arrived'' is a cause. We
 decompose a realised schedule into named instances by diffing it against the
 fault-free schedule for the same case and seed: every way the two differ is an
 instance, and repairing all of them returns the fault-free world exactly. There
@@ -326,14 +350,19 @@ it~\cite{car}.
 at all. A plausible operations reflex, find the first thing that looks wrong
 and call it the cause, which ignores entirely whether that message mattered.
 
-\textbf{Agent-only intervention.} Substitute each of the agent's steps in turn,
-run forward under the same policy, and rank the steps by loss avoided. This is
-the shape of CAR~\cite{car}, CausalFlow~\cite{causalflow} and
-REFLECT~\cite{reflect} reduced to its essentials and transplanted into this
-environment: the interventions are exact rather than sampled because the policy
-is deterministic, which if anything makes it stronger than its published
-counterparts. Its causal model contains no infrastructure variable, so all of
-its causes are agent steps and its infrastructure effect is identically zero.
+\textbf{CAR-shaped agent-only baseline.} Substitute each of the agent's steps
+in turn, run forward under the same policy, and rank the steps by loss
+avoided.
+
+It matters what this is and is not. It is not a reproduction of
+CAR~\cite{car}, CausalFlow~\cite{causalflow} or REFLECT~\cite{reflect}, and no
+number below should be read as a score for any of those systems. It is their
+\emph{variable scope} --- interventions on agent steps only --- reduced to
+essentials and transplanted here, with interventions exact rather than sampled
+because the policy is deterministic, which if anything makes this baseline
+stronger than its published counterparts on the axis being compared. Its
+causal model contains no infrastructure variable, so all of its causes are
+agent steps and its infrastructure effect is identically zero.
 
 \textbf{Single-fault repair.} Repair each message on its own, rank by loss
 avoided. The natural first thing to try once fault interventions are available,
@@ -428,10 +457,18 @@ of episodes in which the agent happens to be at fault. It is not that the
 method performs poorly. It answers a different question correctly.
 
 Single-fault repair is exact on the single and conjunctive strata and scores
-\faultSingleOverdet\%\ on the overdetermined one, which is the arithmetic: when
-either message alone is enough, repairing one changes nothing and every
+\faultSingleOverdet\%\ on the overdetermined one, which is the arithmetic:
+when either message alone is enough, repairing one changes nothing and every
 candidate scores zero. Minimal sufficient sets and joint Shapley are exact on
 all four.
+
+First divergence behaves differently on that stratum and the reason is worth a
+sentence. It names the earliest message that arrived late or not at all, and
+on overdetermined episodes it lands on a true cause about half the time. The
+episodes carry distractor faults verified harmless alongside the causal set,
+and a distractor is as likely to be early as a cause is, so the earliest
+anomaly is frequently not one of the two sufficient messages. The rule is not
+reasoning about sufficiency; it is ordering by arrival and taking the first.
 
 \subsection{Splitting the bill}
 
@@ -461,7 +498,10 @@ distinguishes the methods that have it.
 
 \begin{table*}[t]
 \centering
-\caption{Repairing what each method named, and what it cost to compute.}
+\caption{Repairing what each method named, and what it cost to compute. Cost
+is counted in episode replays, which is a property of the method and
+reproduces exactly; wall-clock time is a property of the machine and is not
+reported.}
 \label{tab:repair}
 \footnotesize\setlength{\tabcolsep}{3pt}
 \input{tables/repair}
@@ -484,7 +524,7 @@ repair recovers \faultSingleRepair\%. Minimal sufficient sets recover
 Cost separates the two methods that are exact. Minimal sufficient sets need
 \minSuffReplays{} replays per episode; joint Shapley needs \shapleyReplays.
 Shapley buys the full allocation across messages, which a minimal set does not
-provide; when the question is only "what do we fix", the cheap method is also
+provide; when the question is only ``what do we fix'', the cheap method is also
 the right one.
 
 \subsection{How often interactions matter}
@@ -492,7 +532,7 @@ the right one.
 Across \nonAdditiveCI{} of episodes with infrastructure loss, repairing each
 message on its own does not account for the whole infrastructure effect. The
 mean gap is \$\interactionGap. On \overdetCI{} every single-repair score is
-zero while the total is not. Interval are percentile bootstraps over
+zero while the total is not. Intervals are percentile bootstraps over
 \ciTasks{} tasks covering \ciEpisodes{} episodes, resampling tasks rather than
 episodes because episodes from one task share its amount, archetype and fault
 draw. The algebraic identity needs no such interval and is not given one;
@@ -559,8 +599,8 @@ shows any activity. Its infrastructure effect is \optInfra\%, and it is \emph{ne
 Faults help it, on net. A policy that acts on the first sign of payment is
 occasionally saved by a message going missing, because the message it did not
 receive is the one it would have acted on. We would not have predicted the sign
-and do not present it as a general result; it is a reminder that "the
-infrastructure was at fault" is a claim with a direction, and that a method
+and do not present it as a general result; it is a reminder that ``the
+infrastructure was at fault`` is a claim with a direction, and that a method
 which can only add blame to the agent cannot represent it at all.
 
 \subsection{Which situations are the environment's fault}
@@ -568,7 +608,10 @@ which can only add blame to the agent cannot represent it at all.
 \begin{table}[t]
 \centering
 \caption{Where responsibility sits, by archetype, pooled over the three
-non-gated policies. Shares are of that archetype's total excess loss.}
+non-gated policies. Values are the three signed decomposition terms as
+percentages of that archetype's total excess loss. They are not shares: a term
+can be negative, and can exceed 100\%, when one of the others runs the other
+way.}
 \label{tab:archetype}
 \footnotesize\setlength{\tabcolsep}{3pt}
 \input{tables/archetype}
@@ -649,13 +692,21 @@ the policy differential for every subject.
 
 \section{Conclusion}
 
-Given an environment whose fault process can be replayed, the question "was
-this the agent's fault or the system's?" has an exact answer, and it is cheap to
-compute. The obstacle is not statistical. It is that a causal model containing
-only agent steps has to answer "the agent" every time, and will do so
-confidently: on our planted episodes such a method misfiles every
+Given an environment whose fault process can be replayed, the question ``was
+this the agent's fault or the system's?'' has an exact answer, and it is cheap
+to compute. The obstacle is not statistical. It is that a causal model
+containing only agent steps has to answer ``the agent'' every time, and will
+do so confidently: on our planted episodes such a baseline misfiles every
 infrastructure failure and charges \$\agentOnlyDollars{} to decisions, and
 repairing what it names recovers none of it.
+
+Two things follow for anyone building this. Expose environment events as
+intervenable variables, because a cause that cannot be named cannot be found,
+and the cost of omitting them is measurable rather than theoretical. And when
+the goal is operational remediation rather than complete allocation, use
+minimal sufficient repair: it recovers \minSuffRepair\%\ of the available loss
+at \minSuffReplays{} replays per episode, against \shapleyReplays{} for the
+full per-message allocation, which buys precision nobody acts on.
 
 \section*{Artifact availability}
 
@@ -683,8 +734,28 @@ agent traces,'' arXiv:2606.09071, Jun. 2026.
 
 \bibitem{finalitybench}
 A.~Sharma, ``FinalityBench: An effect-level benchmark for agent decisions under
-delayed and conflicting financial finality,'' software artifact and manuscript,
-2026, \textsc{doi}: 10.5281/zenodo.22262591.
+delayed and conflicting financial finality,'' arXiv:2609.04706, 2026,
+\textsc{doi}: 10.5281/zenodo.22262591.
+
+\bibitem{agenticragfp}
+L.~Pothuru, ``When failures propagate: Causal failure attribution in agentic
+retrieval-augmented generation,'' arXiv:2608.20627, 2026.
+
+\bibitem{causely}
+D.~Dalal, E.~Sara, B.~Yemini, C.~Miller, and S.~Kliger, ``Causely: A causal
+intelligence layer for enterprise AI --- a benchmark study on SRE and
+reliability workflows,'' arXiv:2605.18327, 2026.
+
+\bibitem{dcfa}
+Z.~Wang, L.~Wang, S.~Jin, J.~Chen, and Y.~Xiao, ``DCFA: Dual-view
+causal-inspired attribution for failure reasoning in LLM-based multi-agent
+systems,'' arXiv:2609.04749, 2026.
+
+\bibitem{mpbench}
+Y.~In, M.~Tanjim, J.~Subramanian, S.~Kim, U.~Bhattacharya, W.~Kim, S.~Park,
+S.~Sarkhel, and C.~Park, ``Rethinking failure attribution in multi-agent
+systems: A multi-perspective benchmark and evaluation,'' arXiv:2603.25001,
+2026.
 
 \bibitem{halpern2016}
 J.~Y.~Halpern, \emph{Actual Causality}. Cambridge, MA: MIT Press, 2016.

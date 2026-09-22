@@ -53,7 +53,8 @@ def table_accuracy(d):
 def table_allocation(d):
     rows = {r["method"]: r for r in d["rows"]}
     out = [r"\begin{tabular}{lrrr}", r"\toprule",
-           r"method & allocation error (\%) & misattributed (\%) & \$ charged to agent \\",
+           r"& allocation & misattributed & \$ charged \\",
+           r"method & error (\%) & (\%) & to agent \\",
            r"\midrule"]
     for name in ORDER:
         r = rows[name]
@@ -68,22 +69,27 @@ def table_allocation(d):
 def table_repair(repair, cost):
     r_rows = {r["method"]: r for r in repair["rows"]}
     c_rows = {r["method"]: r for r in cost["rows"]}
-    out = [r"\begin{tabular}{lrrrr}", r"\toprule",
-           r"method & loss removed (\%) & fully fixed (\%) & replays/ep. & ms/ep. \\",
+    # No wall-clock column. Replays are a property of the method and reproduce
+    # exactly; milliseconds are a property of the machine and moved by 3x
+    # between runs that changed no code, so printing them made `make
+    # reproduce` rewrite the paper.
+    out = [r"\begin{tabular}{lrrr}", r"\toprule",
+           r"& loss removed & fully fixed & replays \\",
+           r"method & (\%) & (\%) & per ep. \\",
            r"\midrule"]
     for name in ORDER:
         r, c = r_rows[name], c_rows[name]
         bold = r"\bfseries " if name in OURS else ""
         out.append(f"{bold}{LABEL[name]} & {pct(r['loss_recovered_share'])} & "
-                   f"{pct(r['fully_fixed_rate'])} & {c['replays_per_episode']:.1f} & "
-                   f"{c['ms_per_episode']:.1f} \\\\")
+                   f"{pct(r['fully_fixed_rate'])} & {c['replays_per_episode']:.1f} \\\\")
     out += [r"\bottomrule", r"\end{tabular}"]
     return "\n".join(out)
 
 
 def table_landscape(d):
     out = [r"\begin{tabular}{lrrrr}", r"\toprule",
-           r"policy & mean loss (\$) & infrastructure (\%) & policy (\%) & irreducible (\%) \\",
+           r"& mean loss & infra. & policy & residual \\",
+           r"policy & (\$) & (\%) & (\%) & (\%) \\",
            r"\midrule"]
     for r in d["rows"]:
         out.append(f"{r['policy'].replace('_',' ')} & {money(r['mean_loss'])} & "
@@ -106,7 +112,7 @@ def table_archetype(d):
         bucket["irred"] += r["irreducible"]
         bucket["total"] += r["total"]
     out = [r"\begin{tabular}{lrrr}", r"\toprule",
-           r"archetype & infrastructure (\%) & policy (\%) & irreducible (\%) \\",
+           r"archetype & infra. (\%) & policy (\%) & residual (\%) \\",
            r"\midrule"]
     for name, b in sorted(agg.items(), key=lambda kv: -kv[1]["infra"] / max(1, kv[1]["total"])):
         t = max(1.0, b["total"])
