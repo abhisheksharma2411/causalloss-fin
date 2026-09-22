@@ -52,7 +52,10 @@ paper: tables figures
 arxiv: paper
 	$(PY) paper/make_arxiv.py
 
-verify: ## the gates a finished paper has to pass
+# The gates a finished paper has to pass. Not a ``## help'' comment on the
+# target line: this Makefile has no help target, and make would read the words
+# after the colon as prerequisites.
+verify:
 	$(PY) scripts/check_provenance.py
 	$(PY) scripts/check_prose_numbers.py
 

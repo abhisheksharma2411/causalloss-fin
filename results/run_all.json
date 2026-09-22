@@ -5,21 +5,21 @@
   "git_dirty": "yes",
   "command": "run_all.py",
   "python": "3.14.7",
-  "generated_at": "2026-09-22T08:16:26+00:00",
+  "generated_at": "2026-09-22T08:18:31+00:00",
   "finalitybench_version": "1.0.0",
   "finalitybench_location": "sibling checkout",
   "finalitybench_git": "0b01661",
   "experiment": "run_all"
  },
  "timings_seconds": {
-  "e1_attribution": 21.79,
-  "e2_allocation": 23.32,
-  "e3_shapley": 12.23,
-  "e4_repair": 11.99,
+  "e1_attribution": 21.49,
+  "e2_allocation": 21.4,
+  "e3_shapley": 12.1,
+  "e4_repair": 11.97,
   "e5_landscape": 2.02,
-  "e6_cost": 3.86,
-  "e7_superposition": 0.22,
+  "e6_cost": 3.71,
+  "e7_superposition": 0.23,
   "e8_worked_example": 0.09,
-  "e9_uncertainty": 1.04
+  "e9_uncertainty": 1.03
  }
 }
