@@ -39,6 +39,13 @@ make arxiv    # paper/causalloss-arxiv.tar.gz, verified standalone
 ```
 
 - **Primary:** `cs.AI`. Cross-list `cs.SE`.
+- **ACM classes:** `I.2.11; D.2.5; C.2.4` — the same three FinalityBench
+  carries, which keeps the series findable together.
+- **Licence:** the arXiv perpetual non-exclusive licence, not CC BY. Every
+  paper here is `\documentclass[conference]{IEEEtran}`, and IEEE's copyright
+  transfer asks you to warrant you have not granted conflicting rights; a CC BY
+  grant is irrevocable and world-wide. The code stays MIT regardless, which is
+  where reuse of the artifact actually happens.
 - Not `cs.LG`: nothing here trains or evaluates a learning method. The
   policies are deterministic procedures and the analysis is causal
   decomposition, so the category would misdirect readers looking for a
