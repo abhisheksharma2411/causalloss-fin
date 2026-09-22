@@ -12,6 +12,7 @@ authors:
 version: 1.0.1
 date-released: 2026-09-22
 license: MIT
+doi: 10.5281/zenodo.22893020
 repository-code: "https://github.com/abhisheksharma2411/causalloss-fin"
 url: "https://abhisheksharma2411.github.io"
 keywords:
