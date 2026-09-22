@@ -32,9 +32,8 @@ each episode's realised delivery schedule into named, individually repairable
 messages, and intervene on \emph{both} the agent's choices and the
 infrastructure's. A telescoping identity splits any policy's loss exactly three
 ways: an infrastructure effect, a policy differential against the best
-implementable policy, and a reference-policy residual. Two of the three can be
-negative, so none is a share; Shapley values then allocate the first across
-individual messages.
+implementable policy, and a reference-policy residual. Two of the three can be negative, so none is a share; Shapley then divides the
+first into signed allocations over individual messages.
 
 One result is structural and needs no corpus: an agent-only baseline identifies
 no infrastructure cause, because its model contains no variable that could name
@@ -312,9 +311,9 @@ modelling error could hide.
 
 Two of the three terms can be negative, so none of them is called a share.
 They are the \emph{infrastructure effect}, the \emph{policy differential} and
-the \emph{reference-policy residual}, and ``share'' is kept for the Shapley
-division of the first of those, which is a division of a fixed total into
-parts that sum to it. The infrastructure effect goes negative when faults help
+the \emph{reference-policy residual}. The Shapley output is not called a share
+either: it divides the infrastructure effect into parts that sum to it, but
+those parts are signed, so we call them \emph{signed allocations} throughout. The infrastructure effect goes negative when faults help
 a policy on net, which happens and is reported in Section~\ref{sec:results}. The policy term is a gap
 to the best \emph{implementable} policy rather than to a per-task optimum, so it
 goes negative whenever the subject beats that baseline on a task: on

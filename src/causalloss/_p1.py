@@ -96,4 +96,13 @@ def p1_provenance() -> dict[str, str]:
     }
 
 
-ensure_p1()
+# Deliberately not called at import time.
+#
+# It used to be, and that made the repository impossible to bootstrap from a
+# fresh clone: ``make p1`` exists to *fetch* FinalityBench, but it has to
+# import this module to reach ``clone_p1``, and the import raised before the
+# clone could run. Both the primary command and its fallback failed the same
+# way, so a checkout with no sibling and no vendor/ could never set itself up.
+#
+# Every entry point that needs P1 calls ``ensure_p1()`` itself; see
+# ``experiments/_common.py`` and the modules under ``src/causalloss``.

@@ -24,14 +24,17 @@ $(PY):
 
 # This paper is a causal layer over FinalityBench and does not reimplement it.
 # A sibling checkout is used when present; otherwise the released tag is cloned.
+# Resolve FinalityBench: use an installed package or a sibling checkout if one
+# is there, otherwise clone the released tag into vendor/. The previous version
+# of this rule could never bootstrap a fresh clone, because both its command
+# and its fallback imported a module that called ensure_p1() at import time and
+# so raised before the clone could run.
 p1:
 	@$(PY) -c "import sys; sys.path.insert(0,'src'); \
 	from causalloss._p1 import ensure_p1, clone_p1, p1_provenance; \
-	import pathlib; \
-	(ensure_p1() if any((pathlib.Path('../finalitybench/src')/'finalitybench').glob('__init__.py')) else clone_p1()); \
-	print('finalitybench:', p1_provenance())" 2>/dev/null || \
-	$(PY) -c "import sys; sys.path.insert(0,'src'); \
-	from causalloss._p1 import clone_p1; print('cloned to', clone_p1())"
+	\
+	exec('try:\n    ensure_p1()\nexcept ImportError:\n    clone_p1()\n    ensure_p1()'); \
+	print('finalitybench:', p1_provenance())"
 
 test: setup
 	$(PY) -m pytest
