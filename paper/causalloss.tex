@@ -7,7 +7,6 @@
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 \usepackage{microtype}
-\usepackage{balance}
 \input{numbers}
 
 \begin{document}
@@ -363,9 +362,9 @@ It matters what this is and is not. It is not a reproduction of
 CAR~\cite{car}, CausalFlow~\cite{causalflow} or REFLECT~\cite{reflect}, and no
 number below should be read as a score for any of those systems. It is their
 \emph{variable scope} --- interventions on agent steps only --- reduced to
-essentials and transplanted here, with interventions exact rather than sampled
-because the policy is deterministic, which if anything makes this baseline
-stronger than its published counterparts on the axis being compared. Its
+essentials and transplanted here, with interventions exact rather than sampled because the policy is
+deterministic, which gives the baseline favourable conditions on the dimension
+evaluated here. Its
 causal model contains no infrastructure variable, so all of its causes are
 agent steps and its infrastructure effect is identically zero.
 
@@ -381,9 +380,9 @@ its own, and together they are. It is the only method here that is both exact
 on every stratum and cheap.
 
 \textbf{Joint greedy.} Rank agent steps and messages together by their
-individual effects. Included to show that combining the two sides naively is
-not enough: its shares do not sum to the loss, because a step regret and a
-message repair are not measured on the same scale.
+individual effects. Included to show that combining the two sides naively is not enough: its
+independently computed scores do not sum to the loss, because a step regret
+and a message repair are not measured on the same scale.
 
 \textbf{Joint Shapley.} Take the agent and infrastructure effects from the exact
 identity of Section~\ref{sec:split}, then distribute the infrastructure effect
@@ -727,7 +726,6 @@ FinalityBench artifact~\cite{finalitybench} rather than reimplementing it, and
 each result file records the revision it ran against. \texttt{make reproduce}
 runs the suite end to end from a clean tree.
 
-\balance
 \begin{thebibliography}{99}
 
 \bibitem{car}

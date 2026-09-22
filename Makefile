@@ -58,8 +58,9 @@ arxiv: paper
 verify:
 	$(PY) scripts/check_provenance.py
 	$(PY) scripts/check_prose_numbers.py
+	$(PY) scripts/check_package_current.py
 
-reproduce: distclean setup test experiments figures tables paper verify
+reproduce: distclean setup test experiments figures tables paper arxiv verify
 	@echo
 	@echo "reproduce complete -- paper/causalloss.pdf, gates passed"
 

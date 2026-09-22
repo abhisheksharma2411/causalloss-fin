@@ -1,4 +1,4 @@
-# CausalLoss-Fin v1.0.1
+# CausalLoss-Fin v1.0.2
 
 A causal layer over FinalityBench that answers "was this the agent's fault or
 the system's?" — exactly, and cheaply.
@@ -9,9 +9,9 @@ the system's?" — exactly, and cheaply.
   effect, a policy differential against the best implementable policy, and a
   reference-policy residual, with nothing left unattributed. Verified on
   3,852/3,852 episodes.
-- **Shapley allocation** across individual messages, summing to the
-  infrastructure effect by the efficiency axiom. These are shares; the three
-  terms above are not, because two of them go negative.
+- **Shapley allocation** across individual messages, satisfying efficiency so
+  the allocations sum to the infrastructure effect. The allocations are signed:
+  a message whose repair would have increased the loss carries a negative one.
 - **Minimal sufficient causes** — the smallest set of messages whose joint
   repair removes the loss. Exact on every stratum at 2.3 replays per episode.
 - **Planted ground truth** in four strata, including overdetermination, with
@@ -27,7 +27,41 @@ no variable for the environment, so no infrastructure cause is expressible in
 its output. That part is a proposition about the method and needs no corpus.
 What the corpus measures is the size of the consequence.
 
-## What changed since v1.0.0
+## What changed since v1.0.1
+
+Two external review passes. The substantive corrections:
+
+**Shapley allocations are signed.** v1.0.1 called them shares and claimed
+non-negativity in the additive case. Additivity of the value function does not
+bound the sign, and a fault that helped the policy carries a negative
+allocation. Corrected in the paper and in this file.
+
+**One claim was false as arithmetic.** "The best accuracy-per-replay belongs to
+minimal sufficient sets" does not hold as a ratio: first divergence gets 67.0
+verdict points per replay against 43.5. The paper now claims what is true, that
+minimal sufficient repair is the cheapest method exact on every planted
+stratum, and concedes the ratio.
+
+**The opening claim was too broad.** AgenticRAG-FP (arXiv:2608.20627) does
+inject certified faults into retrieval hops, so it is untrue that prior
+counterfactual attribution intervenes only on agent decisions. It is now cited
+and differentiated: it measures whether the injected hop is recovered, not how
+much of a realised cost each fault accounts for. Causely, DCFA and MP-Bench are
+placed likewise, and FinalityBench is cited as arXiv:2609.04706.
+
+**Scope is disclosed in the abstract**, not only in the limitations: the
+subjects are deterministic programmatic policies, not language-model agents.
+
+**Cost is counted in replays.** Wall-clock timings moved threefold between runs
+that changed no code, so printing them let `make reproduce` rewrite the paper.
+
+**The comparison baseline is named for what it is**, a CAR-shaped agent-only
+baseline reproducing those methods' variable scope, not the systems themselves.
+
+Intervals now state their level and replicate count. `make reproduce` ends in
+the provenance and prose-number gates. `__version__` had still reported 1.0.0.
+
+## What changed in v1.0.1
 
 **Terminology.** The three telescoping terms are no longer called "shares".
 Two of them go negative — the infrastructure effect when faults help a policy
